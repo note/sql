@@ -1,5 +1,4 @@
-create database OurRental
-
+--create database OurRental
 use OurRental
 CREATE TABLE label (
   labelID int NOT NULL PRIMARY KEY IDENTITY,
@@ -66,7 +65,7 @@ CREATE TABLE film_and_category (
   PRIMARY KEY(filmID, categoryID)
 )
 
-CREATE TABLE Item (
+CREATE TABLE item (
   filmID int NOT NULL,
   mediumID int NOT NULL,
   FOREIGN KEY (filmID) references film(filmID),
@@ -94,7 +93,7 @@ CREATE TABLE reservation (
   memberID int NOT NULL,
   mediumID int NOT NULL,
   filmID int NOT NULL,
-  logDate DATE NOT NULL,
+  logDate DATE NOT NULL default getdate(),
   acceptDate DATE NULL,
   FOREIGN KEY (memberID) references member(memberID),
   FOREIGN KEY (filmID) references film(filmID),
@@ -105,7 +104,7 @@ CREATE TABLE reservation (
 CREATE TABLE loan (
   copyID int NOT NULL PRIMARY KEY,
   memberID int NOT NULL,
-  outDate DATE NOT NULL,
+  outDate DATE NOT NULL default getdate(),
   dueDate DATE NOT NULL,
   FOREIGN KEY (copyID) references copy(copyID),
   FOREIGN KEY (memberID) references member(memberID)
@@ -115,7 +114,7 @@ CREATE TABLE loanhist (
   outDate DATE NOT NULL,
   copyID int NOT NULL,
   dueDate DATE NOT NULL,
-  inDate DATE NOT NULL,
+  inDate DATE NOT NULL default getdate(),
   fineAssessed DECIMAL(2) NULL,
   finePaid DECIMAL(2) NULL,
   fineWaived DECIMAL(2) NULL,
@@ -137,8 +136,12 @@ CREATE TABLE reservation_and_film_and_label (
   FOREIGN KEY (mediumID) references medium(mediumID)
 )
 
+/*
 create procedure deleteMember @id int
 as
-delete from member where memberID in (select memberID from juvenile where adult_memberID=@id)
-delete from adult where memberID=@id
-delete from member where memberID=@id
+begin
+	delete from member where memberID in (select memberID from juvenile where adult_memberID=@id)
+	delete from adult where memberID=@id
+	delete from member where memberID=@id
+end
+*/
