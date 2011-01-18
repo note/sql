@@ -15,7 +15,7 @@ TO DO:
 	1.7. film_and_label: musi byc expirationDate > getDate()
 	1.8. loan: musi byc dueDate > outDate
 	1.9. loanhist: musi byc finePaid <= fineAssessed
-	1.10. Ograniczenie dla roznych intow (mediumID < 65536); doprecuzyj gdzie jeszcze(!)
+	1.10. Ograniczenie dla roznych intow (mediumID < 65536); doprecyzuj gdzie jeszcze(!)
 	1.11. Ograniczenia wypożyczeń, rabaty(!) pdf: 
 		1.11.1. "W ramach jednego wypozyczenia klient moze pozyczyc okreslona w regulaminie ich liczbę. W danym momencie nie może przekraczać tej liczby". Max liczba: 6 (imho);
 		1.11.2. "Mozna rezerwowac filmy o ile aktualnie nie przetrzymuje sie zadnego filmu. Rezerwacje maja okreslona waznosc. Rezerwacje moga byc kolejkowane". Czyli 2 ostatnie mamy prawie zalatwione. Trzeba tylko zrobic, ze jak acceptDate + 2 weeks > getdate() to robimy delete dla konkretnej rezerwacji.
