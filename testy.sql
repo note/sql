@@ -39,11 +39,15 @@ delete from category where categoryID = 1
 
 --obsluga usuwania memberow
 
+--powinno nie zadzialac - za kroki numer telefonu:
 insert into member(lastname, firstname,phone, active)
-values ('Gajecki', 'Marek', '4846312', 1)
+values ('Gajecki', 'Marek', '486575122', 1)
+
+insert into member(lastname, firstname,phone, active)
+values ('Gajecki', 'Marek', '48656575122', 1)
 
 insert into adult(memberID, street, homeNo, city, state, zip, expirationDate)
-values(1, 'Mickiewicza', '30', 'Krakow', 'Malopolska', '30500', GETDATE()+(60*60))
+values(7, 'Mickiewicza', '30', 'Krakow', 'Malopolska', '30500', GETDATE()+(60*60))
 
 insert into member(lastname, firstname, phone, active)
 values ('Gajecki', 'Michal', '4846312', 1)
@@ -60,6 +64,7 @@ insert into juvenile(memberID, birthDate, adult_memberID)
 values(4,GETDATE()-(60*60),1)
 
 select * from member
+update member set lastname='reed'
 
 select * from adult a join member m on a.memberID = m.memberID
 select * from juvenile j join member m on j.memberID = m.memberID
@@ -67,3 +72,17 @@ select * from juvenile j join member m on j.memberID = m.memberID
 exec deleteMember @id=3
 exec deleteMember @id=1
 --obsluga usuwania memberow dziala poprawnie!
+
+-- powinien jedynie wypisac komunikat:
+delete from juvenile where memberID=1
+
+select GETDATE()+100
+
+insert into juvenile (memberID, adult_memberID, birthDate) values (3, 7, GETDATE()+100) -- powinno nie zadzialac - birthdate>getdate()
+insert into juvenile (memberID, adult_memberID, birthDate) values (3, 7, '12-11-1877') -- powinno nie zadzialac
+insert into juvenile (memberID, adult_memberID, birthDate) values (3, 7, '12-11-1955') -- powinno spowodowac ustawienie na 0 kolumnny active membera o id=2
+delete from juvenile
+SELECT LEN('COSGG')
+
+insert into member (lastname, firstname, phone, active) values ('Dylan', 'Bob', '1254354354353', 1) -- powinno nie zadzialac - telefon nie ma 11 znakow
+select * from member

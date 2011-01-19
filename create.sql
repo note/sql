@@ -1,4 +1,4 @@
---create database OurRental
+create database OurRental
 use OurRental
 CREATE TABLE label (
   labelID int NOT NULL PRIMARY KEY IDENTITY,
@@ -9,9 +9,10 @@ CREATE TABLE member (
   memberID int NOT NULL PRIMARY KEY IDENTITY,
   lastname VARCHAR(50) NOT NULL,
   firstname VARCHAR(50) NOT NULL,
-  phone VARCHAR(11) NOT NULL,
+  phone CHAR(11) NOT NULL,
   email VARCHAR(100) NULL,
-  active BIT NULL
+  active BIT NULL,
+  CONSTRAINT ck_phone CHECK(LEN(phone) = 11)
 )
 
 CREATE TABLE medium (
@@ -43,9 +44,11 @@ CREATE TABLE adult (
   flatNo VARCHAR(6) NULL,
   city VARCHAR(50) NOT NULL,
   state VARCHAR(50) NOT NULL,
-  zip TEXT NOT NULL,
+  zip CHAR(5) NOT NULL,
   expirationDate DATE NOT NULL,
-  FOREIGN KEY (memberID) references member(memberID)
+  FOREIGN KEY (memberID) references member(memberID),
+  CONSTRAINT ck_expirationDate CHECK(expirationDate>GETDATE()),
+  CONSTRAINT ck_zip CHECK(LEN(zip) = 5)
 )
 
 CREATE TABLE film_and_label (
@@ -54,7 +57,8 @@ CREATE TABLE film_and_label (
   expirationDate DATE NULL,
   FOREIGN KEY (filmID) references film(filmID),
   FOREIGN KEY (labelID) references label(labelID),
-  PRIMARY KEY(filmID, labelID)
+  PRIMARY KEY(filmID, labelID),
+  CHECK (expirationDate>GETDATE())
 )
 
 CREATE TABLE film_and_category (
@@ -77,8 +81,9 @@ CREATE TABLE juvenile (
   adult_memberID int NOT NULL,
   birthDate DATE NOT NULL,
   FOREIGN KEY (memberID) references member(memberID) on delete cascade,
-  FOREIGN KEY (adult_memberID) references adult(memberID)
-)
+  FOREIGN KEY (adult_memberID) references adult(memberID),
+  CONSTRAINT ck_birthDate CHECK (birthDate > '01-01-1900' and birthDate < GETDATE()) 
+ )
 
 CREATE TABLE copy (
   copyID int NOT NULL PRIMARY KEY IDENTITY,
@@ -98,7 +103,8 @@ CREATE TABLE reservation (
   FOREIGN KEY (memberID) references member(memberID),
   FOREIGN KEY (filmID) references film(filmID),
   FOREIGN KEY (mediumID) references medium(mediumID),
-  PRIMARY KEY (memberID, mediumID, filmID)
+  PRIMARY KEY (memberID, mediumID, filmID),
+  CHECK (acceptDate >= logDate)
 )
 
 CREATE TABLE loan (
@@ -107,7 +113,8 @@ CREATE TABLE loan (
   outDate DATE NOT NULL default getdate(),
   dueDate DATE NOT NULL,
   FOREIGN KEY (copyID) references copy(copyID),
-  FOREIGN KEY (memberID) references member(memberID)
+  FOREIGN KEY (memberID) references member(memberID),
+  CHECK (dueDate>outDate)
 )
 
 CREATE TABLE loanhist (
@@ -120,7 +127,8 @@ CREATE TABLE loanhist (
   fineWaived DECIMAL(2) NULL,
   remarks TEXT NULL,
   FOREIGN KEY (copyID) references copy(copyID),
-  PRIMARY KEY (outDate, copyID)
+  PRIMARY KEY (outDate, copyID),
+  CHECK (finePaid <= fineAssessed-fineWaived)
 )
 
 
@@ -136,7 +144,7 @@ CREATE TABLE reservation_and_film_and_label (
   FOREIGN KEY (mediumID) references medium(mediumID)
 )
 
-/*
+
 create procedure deleteMember @id int
 as
 begin
@@ -144,4 +152,42 @@ begin
 	delete from adult where memberID=@id
 	delete from member where memberID=@id
 end
-*/
+
+-- proponuje taka konwencje dla nazw triggerow
+CREATE TRIGGER tr_deleteMember
+ON member
+INSTEAD OF DELETE
+AS
+begin
+	PRINT 'Aby usunac uzytkownika skorzystaj z prodecury deleteMember'
+end
+
+CREATE TRIGGER tr_deleteAdult
+ON adult
+INSTEAD OF DELETE
+AS
+begin
+	PRINT 'Aby usunac uzytkownika skorzystaj z prodecury deleteMember'
+end
+
+CREATE TRIGGER tr_insertJuvenile
+on juvenile
+after insert
+as
+begin
+	IF DATEDIFF(YEAR, (select birthDate from inserted),  GETDATE())>18  --wazne zalozenie - jak ukonczy rocznikowo 18 lat to uznajemy, ze jest pelnoletni'
+	begin
+		UPDATE member SET active=0 WHERE memberID=(SELECT memberID from inserted)
+	end
+end
+
+CREATE TRIGGER tr_updateJuvenile
+on juvenile
+after update
+as
+begin
+	IF DATEDIFF(YEAR, (SELECT birthDate from inserted),  GETDATE())>18  --wazne zalozenie - jak ukonczy rocznikowo 18 lat to uznajemy, ze jest pelnoletni'
+	begin
+		UPDATE member SET active=0 WHERE memberID=(SELECT memberID from inserted)
+	end
+end
