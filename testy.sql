@@ -47,21 +47,21 @@ insert into member(lastname, firstname,phone, active)
 values ('Gajecki', 'Marek', '48656575122', 1)
 
 insert into adult(memberID, street, homeNo, city, state, zip, expirationDate)
-values(7, 'Mickiewicza', '30', 'Krakow', 'Malopolska', '30500', GETDATE()+(60*60))
+values(2, 'Mickiewicza', '30', 'Krakow', 'Malopolska', '30500', GETDATE()+(60*60))
 
 insert into member(lastname, firstname, phone, active)
-values ('Gajecki', 'Michal', '4846312', 1)
+values ('Gajecki', 'Michal', '11223344556', 1)
 insert into member(lastname, firstname, phone, active)
-values ('Gajecki', 'MAciek', '4846312', 1)
+values ('Gajecki', 'MAciek', '11223344556', 1)
 insert into member(lastname, firstname, phone, active)
-values ('Gajecki', 'adam', '4846312', 1)
+values ('Gajecki', 'adam', '11223344556', 1)
 
 insert into juvenile(memberID, birthDate, adult_memberID)
-values(2,GETDATE()-(60*60),1)
+values(10,GETDATE()-(60*60),2)
 insert into juvenile(memberID, birthDate, adult_memberID)
-values(3,GETDATE()-(60*60),1)
+values(11,GETDATE()-(60*60),2)
 insert into juvenile(memberID, birthDate, adult_memberID)
-values(4,GETDATE()-(60*60),1)
+values(12,GETDATE()-(60*60),2)
 
 select * from member
 update member set lastname='reed'
@@ -69,8 +69,8 @@ update member set lastname='reed'
 select * from adult a join member m on a.memberID = m.memberID
 select * from juvenile j join member m on j.memberID = m.memberID
 
-exec deleteMember @id=3
-exec deleteMember @id=1
+exec deleteMember @id=10
+exec deleteMember @id=2
 --obsluga usuwania memberow dziala poprawnie!
 
 -- powinien jedynie wypisac komunikat:
@@ -86,3 +86,20 @@ SELECT LEN('COSGG')
 
 insert into member (lastname, firstname, phone, active) values ('Dylan', 'Bob', '1254354354353', 1) -- powinno nie zadzialac - telefon nie ma 11 znakow
 select * from member
+
+insert into medium (mediumName) VALUES ('DVD')
+insert into medium (mediumName) VALUES ('Blu-ray')
+insert into medium (mediumName) VALUES ('VHS')
+
+insert into film (title, director) VALUES ('Chinatown', 'Polanski')
+
+insert into item (filmID, mediumID) VALUES (1, 2)
+
+insert into copy (filmID, mediumID, onloan) values (1, 2, 1)
+
+exec insertLoan @copy_Id=1, @member_ID=2
+
+select * from item
+select * from copy
+
+exec insertLoan @copy_Id=7, @member_ID=2

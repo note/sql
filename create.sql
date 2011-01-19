@@ -153,6 +153,29 @@ begin
 	delete from member where memberID=@id
 end
 
+create procedure insertLoan @copy_id int, @member_id int
+as
+begin
+	declare @rowcount int
+	select @rowcount=COUNT(*) from loan where memberID=@member_id
+	if(@rowcount<6)
+		begin
+		insert into loan (copyID, memberID, outDate, dueDate) Values (@copy_id, @member_id, GETDATE(), GETDATE()+4)
+		end
+	else
+		begin
+		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' ma juz wypozyczonych 6 filmow'
+		end
+end
+
+create TRIGGER tr_insterLoan
+on loan
+INSTEAD OF INSERT
+AS
+begin
+	PRINT 'Aby dodac wypozyczenie (loan) skorzystaj z procedury insertLoan'
+end
+
 -- proponuje taka konwencje dla nazw triggerow
 CREATE TRIGGER tr_deleteMember
 ON member
