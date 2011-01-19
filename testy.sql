@@ -1,13 +1,13 @@
 use OurRental
 --obsluga usuwania kategorii
 insert into film(title, director, description)
-values('Pan Tadeusz0', 'Hoffman', 'Lorem ipsum')
+values(10, 'Pan Tadeusz0', 'Hoffman', 'Lorem ipsum')
 insert into film(title, director, description)
-values('Pan Tadeusz1', 'Hoffman', 'Lorem ipsum')
+values(10, 'Pan Tadeusz1', 'Hoffman', 'Lorem ipsum')
 insert into film(title, director, description)
-values('Pan Tadeusz2', 'Hoffman', 'Lorem ipsum')
+values(10, 'Pan Tadeusz2', 'Hoffman', 'Lorem ipsum')
 insert into film(title, director, description)
-values('Pan Tadeusz3', 'Hoffman', 'Lorem ipsum')
+values(10, 'Pan Tadeusz3', 'Hoffman', 'Lorem ipsum')
 
 select * from film
 

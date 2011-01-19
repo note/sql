@@ -24,6 +24,7 @@ CREATE TABLE medium (
 
 CREATE TABLE film (
   filmID int NOT NULL PRIMARY KEY IDENTITY,
+  filmPrice DECIMAL(2) NOT NULL,
   title VARCHAR(80) NOT NULL,
   director VARCHAR(80) NOT NULL,
   description TEXT NULL

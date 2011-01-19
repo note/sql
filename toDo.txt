@@ -4,7 +4,7 @@ DONE:
 3. Powstawiane default getdate() w polach reservation:logDate, loan:outDate, loanhist:inDate
 
 TO DO:
-0. Brakuje nam pola 'filmPrice' !!!
+0.* Brakuje nam pola 'filmPrice' !!!
 1. Porobic wszelkie ograniczenia, tj.:
 	1.1.* juvenile: nie moze miec year(birthDate) > year(getDate()) oraz musi byc year(birthDate) + 18 > year(getDate())
 	1.2.* juvenile: jesli birthDate + 18 years > getDate() stan actvie = 0
