@@ -120,6 +120,7 @@ CREATE TABLE loan (
 CREATE TABLE loanhist (
   outDate DATE NOT NULL,
   copyID int NOT NULL,
+  memberID int NOT NULL,
   dueDate DATE NOT NULL,
   inDate DATE NOT NULL default getdate(),
   fineAssessed DECIMAL(2) NULL,
@@ -127,6 +128,7 @@ CREATE TABLE loanhist (
   fineWaived DECIMAL(2) NULL,
   remarks TEXT NULL,
   FOREIGN KEY (copyID) references copy(copyID),
+  FOREIGN KEY (memberID) references member(memberID),
   PRIMARY KEY (outDate, copyID),
   CHECK (finePaid <= fineAssessed-fineWaived)
 )
@@ -144,7 +146,6 @@ CREATE TABLE reservation_and_film_and_label (
   FOREIGN KEY (mediumID) references medium(mediumID)
 )
 
-
 create procedure deleteMember @id int
 as
 begin
@@ -153,22 +154,32 @@ begin
 	delete from member where memberID=@id
 end
 
-create procedure insertLoan @copy_id int, @member_id int
+-- Returns discount in percentage. If loan can't be insterted then returns -1.
+create procedure insertLoan @copy_id int, @member_id int, @discount int OUTPUT
 as
 begin
 	declare @rowcount int
+	set @discount=0
 	select @rowcount=COUNT(*) from loan where memberID=@member_id
 	if(@rowcount<6)
 		begin
+		select @rowcount=COUNT(*) from loanhist where memberID=@member_id
+		
+		if(@rowcount>3)
+			begin
+			set @discount=10
+			end
+			
 		insert into loan (copyID, memberID, outDate, dueDate) Values (@copy_id, @member_id, GETDATE(), GETDATE()+4)
 		end
 	else
 		begin
+		set @discount=-1
 		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' ma juz wypozyczonych 6 filmow'
 		end
 end
 
-create TRIGGER tr_insterLoan
+/*create TRIGGER tr_insterLoan
 on loan
 INSTEAD OF INSERT
 AS
@@ -191,7 +202,7 @@ INSTEAD OF DELETE
 AS
 begin
 	PRINT 'Aby usunac uzytkownika skorzystaj z prodecury deleteMember'
-end
+end*/
 
 CREATE TRIGGER tr_insertJuvenile
 on juvenile
@@ -214,3 +225,10 @@ begin
 		UPDATE member SET active=0 WHERE memberID=(SELECT memberID from inserted)
 	end
 end
+
+CREATE TRIGGER tr_deleteLoan
+ON loan
+AFTER DELETE
+AS BEGIN
+	INSERT INTO loanhist (outDate, copyID, memberID, dueDate) VALUES ((SELECT outDate from deleted), (SELECT copyID from deleted), (SELECT memberID from deleted), (SELECT dueDate from deleted)) --todo naliczanie kary
+END

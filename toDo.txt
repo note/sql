@@ -21,6 +21,8 @@ TO DO:
 		1.11.2. "Mozna rezerwowac filmy o ile aktualnie nie przetrzymuje sie zadnego filmu. Rezerwacje maja okreslona waznosc. Rezerwacje moga byc kolejkowane". Czyli 2 ostatnie mamy prawie zalatwione. Trzeba tylko zrobic, ze jak acceptDate + 2 weeks > getdate() to robimy delete dla konkretnej rezerwacji.
 		1.11.3. "Jesli klient przetrzymuje aktualnie ktorykolwiek film, to nie moze ani pozyczyc ani zarezerwowac". To w zasadzie powtorzenie poprzedniego. Tylko przy ladowaniu danych do 'reservation' oraz 'loan' trzeba sprawdzac, czy member nie przetrzymuje czasem czegos.
 		1.11.4. "Mozemy przyznawac klientom rabaty za wypozyczenia". Tutaj nie mamy nic. Proponuje podczas zapisywania klienta do 'loan' sprawdzic jakas procedura ile ma wypozyczen w ostatnim pol roku i ewentualnie policzyc mu za to jakis rabat.
+		1.11.5 Przy usuwaniu loana zapisuje wszystko co potrzebne do loan hist.
+		1.11.5 Przy usuwaniu loana automatycznie wylicza fine_assessed.
 2. Porobic widoki:
 	2.1. PDF: "Na podstawie statystyki wypozyczen ustalana jest co miesiac lista top 10 filmow i top 10 najlepszych klientow".
 	// bo chyba to sa te widoki, tak?

@@ -57,11 +57,11 @@ insert into member(lastname, firstname, phone, active)
 values ('Gajecki', 'adam', '11223344556', 1)
 
 insert into juvenile(memberID, birthDate, adult_memberID)
-values(10,GETDATE()-(60*60),2)
+values(5,GETDATE()-(60*60),1)
 insert into juvenile(memberID, birthDate, adult_memberID)
-values(11,GETDATE()-(60*60),2)
+values(3,GETDATE()-(60*60),1)
 insert into juvenile(memberID, birthDate, adult_memberID)
-values(12,GETDATE()-(60*60),2)
+values(4,GETDATE()-(60*60),2)
 
 select * from member
 update member set lastname='reed'
@@ -69,8 +69,8 @@ update member set lastname='reed'
 select * from adult a join member m on a.memberID = m.memberID
 select * from juvenile j join member m on j.memberID = m.memberID
 
-exec deleteMember @id=10
-exec deleteMember @id=2
+exec deleteMember @id=5
+exec deleteMember @id=1
 --obsluga usuwania memberow dziala poprawnie!
 
 -- powinien jedynie wypisac komunikat:
@@ -95,11 +95,26 @@ insert into film (title, director) VALUES ('Chinatown', 'Polanski')
 
 insert into item (filmID, mediumID) VALUES (1, 2)
 
-insert into copy (filmID, mediumID, onloan) values (1, 2, 1)
-
-exec insertLoan @copy_Id=1, @member_ID=2
+declare @c int
+set @c=54
+print @c
 
 select * from item
-select * from copy
+select * from loan
+select * from loanhist
+
+insert into copy (filmID, mediumID, onloan) values (1, 2, 1)
+declare @mul int
+exec insertLoan @copy_Id=100, @member_ID=2, @price_multiplier=@mul output
+select @mul
+
+--powinno spowodowac usuniecie z loan i wpisanie do loan hist
+delete from loan where copyID=103
+
+select * from member
 
 exec insertLoan @copy_Id=7, @member_ID=2
+
+select l.copyid, l.memberid, l.outdate from loanhist lh
+		join loan l on l.copyID=lh.copyID
+		where l.memberID=2
