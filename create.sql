@@ -83,7 +83,7 @@ CREATE TABLE juvenile (
   birthDate DATE NOT NULL,
   FOREIGN KEY (memberID) references member(memberID) on delete cascade,
   FOREIGN KEY (adult_memberID) references adult(memberID),
-  CONSTRAINT ck_birthDate CHECK (birthDate > '01-01-1900' and birthDate < GETDATE()) 
+  CONSTRAINT ck_birthDate CHECK (birthDate > (year(getdate()) - 18) and birthDate < GETDATE()) 
  )
 
 CREATE TABLE copy (
