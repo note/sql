@@ -116,7 +116,7 @@ CREATE TABLE loan (
   dueDate DATE NOT NULL,
   FOREIGN KEY (copyID) references copy(copyID),
   FOREIGN KEY (memberID) references member(memberID),
-  CONSTRAINT ck_outDate CHECK(logDate=GETDATE()),
+  CONSTRAINT ck_outDate CHECK(outDate=GETDATE()),
   CHECK (dueDate>outDate)
 )
 
@@ -133,7 +133,7 @@ CREATE TABLE loanhist (
   FOREIGN KEY (copyID) references copy(copyID),
   FOREIGN KEY (memberID) references member(memberID),
   PRIMARY KEY (outDate, copyID),
-  CONSTRAINT ck_inDate CHECK(logDate=GETDATE()),
+  CONSTRAINT ck_inDate CHECK(inDate=GETDATE()),
   CHECK (finePaid <= fineAssessed-fineWaived)
 )
 
