@@ -3,7 +3,7 @@ use OurRental
 CREATE TABLE label (
   labelID int NOT NULL PRIMARY KEY IDENTITY,
   priceMultiply DECIMAL(2) NOT NULL DEFAULT 1,
-  loanPeriod int NULLda
+  loanPeriod int NULL
 )
 CREATE TABLE member (
   memberID int NOT NULL PRIMARY KEY IDENTITY,
