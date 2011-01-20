@@ -165,22 +165,33 @@ begin
 	declare @rowcount int
 	set @discount=0
 	select @rowcount=COUNT(*) from loan where memberID=@member_id
-	if(@rowcount<6)
-		begin
+	if(@rowcount<6) begin
 		select @rowcount=COUNT(*) from loanhist where memberID=@member_id
 		
-		if(@rowcount>3)
-			begin
+		if(@rowcount>3) begin
 			set @discount=10
-			end
+		end
 			
 		insert into loan (copyID, memberID, outDate, dueDate) Values (@copy_id, @member_id, GETDATE(), GETDATE()+4)
-		end
-	else
-		begin
+	end
+	else begin
 		set @discount=-1
 		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' ma juz wypozyczonych 6 filmow'
-		end
+	end
+end
+
+--will not allow to make a reservation for one who is keeping films too long
+create procedure insertReservation @member_id int, @film_id int, @medium_id int
+as
+begin
+	declare @time_delay int
+	select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
+	if (@time_delay > 0) begin
+		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'przetrzymuje filmy'
+	end
+	else begin			
+		insert into reservation (memberID, mediumID, filmID, logDate) Values (@member_id, @medium_id, GETDATE())
+	end
 end
 
 /*create TRIGGER tr_insterLoan
