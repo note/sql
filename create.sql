@@ -158,7 +158,7 @@ begin
 	delete from member where memberID=@id
 end
 
--- Returns discount in percentage. If loan can't be insterted then returns -1.
+--Returns discount in percentage. If loan can't be insterted then returns -1.
 --Also will not allow to make a loan for one who is keeping films too long
 create procedure insertLoan @copy_id int, @member_id int, @discount int OUTPUT
 as
@@ -199,7 +199,7 @@ begin
 		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'przetrzymuje filmy'
 	end
 	else begin			
-		insert into reservation (memberID, mediumID, filmID, logDate) Values (@member_id, @medium_id, GETDATE())
+		insert into reservation (memberID, mediumID, filmID, logDate) Values (@member_id, @medium_id, @film_id, GETDATE())
 	end
 end
 
