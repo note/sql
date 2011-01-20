@@ -159,13 +159,19 @@ begin
 end
 
 -- Returns discount in percentage. If loan can't be insterted then returns -1.
+--Also will not allow to make a loan for one who is keeping films too long
 create procedure insertLoan @copy_id int, @member_id int, @discount int OUTPUT
 as
 begin
 	declare @rowcount int
 	set @discount=0
 	select @rowcount=COUNT(*) from loan where memberID=@member_id
-	if(@rowcount<6) begin
+
+	-- warunek na przetrzymywanie filmow:
+	declare @time_delay int
+	select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
+	
+	if(@rowcount<6) and (@time_delay = 0) begin
 		select @rowcount=COUNT(*) from loanhist where memberID=@member_id
 		
 		if(@rowcount>3) begin
@@ -174,9 +180,12 @@ begin
 			
 		insert into loan (copyID, memberID, outDate, dueDate) Values (@copy_id, @member_id, GETDATE(), GETDATE()+4)
 	end
-	else begin
+	else if(@rowcount >= 6) begin
 		set @discount=-1
 		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' ma juz wypozyczonych 6 filmow'
+	end
+	else begin
+		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'przetrzymuje filmy'
 	end
 end
 
