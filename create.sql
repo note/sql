@@ -3,7 +3,7 @@ use OurRental
 CREATE TABLE label (
   labelID int NOT NULL PRIMARY KEY IDENTITY,
   priceMultiply DECIMAL(2) NOT NULL DEFAULT 1,
-  loanPeriod int NULL
+  loanPeriod int NULLda
 )
 CREATE TABLE member (
   memberID int NOT NULL PRIMARY KEY IDENTITY,
@@ -105,6 +105,7 @@ CREATE TABLE reservation (
   FOREIGN KEY (filmID) references film(filmID),
   FOREIGN KEY (mediumID) references medium(mediumID),
   PRIMARY KEY (memberID, mediumID, filmID),
+  CONSTRAINT ck_logDate CHECK(logDate=GETDATE()),
   CHECK (acceptDate >= logDate)
 )
 
@@ -115,6 +116,7 @@ CREATE TABLE loan (
   dueDate DATE NOT NULL,
   FOREIGN KEY (copyID) references copy(copyID),
   FOREIGN KEY (memberID) references member(memberID),
+  CONSTRAINT ck_outDate CHECK(logDate=GETDATE()),
   CHECK (dueDate>outDate)
 )
 
@@ -131,6 +133,7 @@ CREATE TABLE loanhist (
   FOREIGN KEY (copyID) references copy(copyID),
   FOREIGN KEY (memberID) references member(memberID),
   PRIMARY KEY (outDate, copyID),
+  CONSTRAINT ck_inDate CHECK(logDate=GETDATE()),
   CHECK (finePaid <= fineAssessed-fineWaived)
 )
 
