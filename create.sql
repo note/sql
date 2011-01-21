@@ -24,6 +24,7 @@ CREATE TABLE medium (
 
 CREATE TABLE film (
   filmID int NOT NULL PRIMARY KEY IDENTITY,
+  filmPrice DECIMAL(2) NOT NULL,
   title VARCHAR(80) NOT NULL,
   director VARCHAR(80) NOT NULL,
   description TEXT NULL
@@ -82,7 +83,7 @@ CREATE TABLE juvenile (
   birthDate DATE NOT NULL,
   FOREIGN KEY (memberID) references member(memberID) on delete cascade,
   FOREIGN KEY (adult_memberID) references adult(memberID),
-  CONSTRAINT ck_birthDate CHECK (birthDate > '01-01-1900' and birthDate < GETDATE()) 
+  CONSTRAINT ck_birthDate CHECK (year(birthDate) > (year(getdate()) - 18) and birthDate < GETDATE()) 
  )
 
 CREATE TABLE copy (
@@ -104,6 +105,7 @@ CREATE TABLE reservation (
   FOREIGN KEY (filmID) references film(filmID),
   FOREIGN KEY (mediumID) references medium(mediumID),
   PRIMARY KEY (memberID, mediumID, filmID),
+  CONSTRAINT ck_logDate CHECK(logDate=GETDATE()),
   CHECK (acceptDate >= logDate)
 )
 
@@ -114,6 +116,7 @@ CREATE TABLE loan (
   dueDate DATE NOT NULL,
   FOREIGN KEY (copyID) references copy(copyID),
   FOREIGN KEY (memberID) references member(memberID),
+  CONSTRAINT ck_outDate CHECK(outDate=GETDATE()),
   CHECK (dueDate>outDate)
 )
 
@@ -130,6 +133,7 @@ CREATE TABLE loanhist (
   FOREIGN KEY (copyID) references copy(copyID),
   FOREIGN KEY (memberID) references member(memberID),
   PRIMARY KEY (outDate, copyID),
+  CONSTRAINT ck_inDate CHECK(inDate=GETDATE()),
   CHECK (finePaid <= fineAssessed-fineWaived)
 )
 
@@ -154,29 +158,49 @@ begin
 	delete from member where memberID=@id
 end
 
--- Returns discount in percentage. If loan can't be insterted then returns -1.
+--Returns discount in percentage. If loan can't be insterted then returns -1.
+--Also will not allow to make a loan for one who is keeping films too long
 create procedure insertLoan @copy_id int, @member_id int, @discount int OUTPUT
 as
 begin
 	declare @rowcount int
 	set @discount=0
 	select @rowcount=COUNT(*) from loan where memberID=@member_id
-	if(@rowcount<6)
-		begin
+
+	-- warunek na przetrzymywanie filmow:
+	declare @time_delay int
+	select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
+	
+	if(@rowcount<6) and (@time_delay = 0) begin
 		select @rowcount=COUNT(*) from loanhist where memberID=@member_id
 		
-		if(@rowcount>3)
-			begin
+		if(@rowcount>3) begin
 			set @discount=10
-			end
+		end
 			
 		insert into loan (copyID, memberID, outDate, dueDate) Values (@copy_id, @member_id, GETDATE(), GETDATE()+4)
-		end
-	else
-		begin
+	end
+	else if(@rowcount >= 6) begin
 		set @discount=-1
 		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' ma juz wypozyczonych 6 filmow'
-		end
+	end
+	else begin
+		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'przetrzymuje filmy'
+	end
+end
+
+--will not allow to make a reservation for one who is keeping films too long
+create procedure insertReservation @member_id int, @film_id int, @medium_id int
+as
+begin
+	declare @time_delay int
+	select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
+	if (@time_delay > 0) begin
+		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'przetrzymuje filmy'
+	end
+	else begin			
+		insert into reservation (memberID, mediumID, filmID, logDate) Values (@member_id, @medium_id, @film_id, GETDATE())
+	end
 end
 
 /*create TRIGGER tr_insterLoan
