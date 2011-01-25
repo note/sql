@@ -123,6 +123,7 @@ CREATE TABLE loan (
 	FOREIGN KEY (memberID) references member(memberID),
 	CONSTRAINT ck_outDate CHECK(outDate=GETDATE()),
 	CHECK (dueDate>outDate)
+	CONSTRAINT loan_unique UNIQUE (memberID, copyID)
 )
 
 CREATE TABLE loanhist (
@@ -140,6 +141,7 @@ CREATE TABLE loanhist (
 	PRIMARY KEY (outDate, copyID),
 	CONSTRAINT ck_inDate CHECK(inDate=GETDATE()),
 	CHECK (finePaid <= fineAssessed-fineWaived)
+	CONSTRAINT loanhist_unique UNIQUE (outDate, copyID)
 )
 
 
