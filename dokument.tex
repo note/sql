@@ -1,0 +1,228 @@
+\documentclass[12pt,a4paper,titlepage]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[polish]{babel}
+\usepackage{graphicx}
+\usepackage{caption}
+\title{Bazy Danych I - Projekt Semestralny}
+\author{Dariusz Mydlarz, Michał Sitko}
+\date{\today}
+\begin{document}
+
+\maketitle
+\newpage
+
+
+\section{Struktura bazy}
+\subsection{Schemat}
+\begin{center}
+	\includegraphics[width=1.00\textwidth]{bazyNew.png}
+	\captionof{figure}{Schemat bazy danych}
+	\label{fig:schemat}
+\end{center}
+
+
+\subsection{Tabele}
+Pola pogrubione są polami wymaganymi.
+% segment tabela
+\paragraph{member}
+\subparagraph{pola:}
+\textbf{memberID (PK), firstname, lastname, phone, active}, email
+\subparagraph{sprawdzanie poprawności danych:}
+\begin{itemize}
+	\item phone, \textit{długość pola musi być równa 11}
+\end{itemize}
+% ends tabela
+
+\newpage
+
+% segment tabela
+\paragraph{juvenile}
+\subparagraph{pola:}
+\textbf{memberID (PK, FK:\underline{member}), adult\_memberID (FK),} \\ \textbf{birthDate}
+\subparagraph{sprawdzanie poprawności danych:}
+\begin{itemize}
+	\item birthDate, \textit{musi być mniejsza od daty wprowadzania i większa od tej samej daty pomniejszonej o 18 lat }
+\end{itemize}
+% ends tabela
+
+% segment tabela
+\paragraph{adult}
+\subparagraph{pola:}
+\textbf{memberID (PK, FK:\underline{member}), street, homeNo, city, state, zip, expirationDate}, flatNo
+\subparagraph{sprawdzanie poprawności danych:}
+\begin{itemize}
+	\item expirationDate, \textit{data wygaśnięcia musi być większa od aktualnej daty}
+	\item zip, \textit{długość pola musi być równa 5}
+\end{itemize}
+\subparagraph{wartości domyślne:}
+\begin{itemize}
+	\item expirationDate, \textit{aktualna data + 5 lat}
+\end{itemize}
+% ends tabela
+
+% segment tabela
+\paragraph{reservation}
+\subparagraph{pola:}
+\textbf{memberID (PK, FK:\underline{member}), mediumID (PK, FK:\underline{item}), filmID (PK, FK:\underline{member}), logDate, acceptDate}
+\subparagraph{unikalne pola, zestawy pól:}
+\begin{itemize}
+	\item (memberID, filmID, mediumID), \textit{unikalna trójka: klient, film i nośnik filmu}
+\end{itemize}
+\subparagraph{sprawdzanie poprawności danych:}
+\begin{itemize}
+	\item logDate, \textit{nie może być inna niż aktualna data}
+	\item acceptDate, \textit{musi być większa niż logDate}
+\end{itemize}
+\subparagraph{wartości domyślne:}
+\begin{itemize}
+	\item logDate, \textit{aktualna data}
+\end{itemize}
+% ends tabela
+
+% segment tabela
+\paragraph{film}
+\subparagraph{pola:}
+\textbf{filmID (PK), filmPrice, title, director}, description
+\subparagraph{unikalne pola, zestawy pól:}
+\begin{itemize}
+	\item (title, director), \textit{unikalna para: nazwa filmu i reżyser}
+\end{itemize}
+% ends tabela
+
+% segment tabela
+\paragraph{label}
+\subparagraph{pola:}
+\textbf{labelID (PK), labelName, priceMultiply, loanPeriod}
+\subparagraph{unikalne pola, zestawy pól:}
+\begin{itemize}
+	\item labelName, \textit{unikalna nazwa etykiety (nowość, promocja, hit)}
+\end{itemize}
+\subparagraph{wartości domyślne:}
+\begin{itemize}
+	\item priceMultiply, \textit{1.0}
+\end{itemize}
+% ends tabela
+
+% segment tabela
+\paragraph{film\_and\_label}
+\subparagraph{pola:}
+\textbf{filmID (PK, FK:\underline{film}), labelID (PK, FK:\underline{label}), expirationDate}
+\subparagraph{unikalne pola, zestawy pól:}
+\begin{itemize}
+	\item (filmID, labelID), \textit{unikalna para: film i etykieta}
+\end{itemize}
+\subparagraph{sprawdzanie poprawności danych:}
+\begin{itemize}
+	\item expirationDate, \textit{musi być większa od daty wprowadzania}
+\end{itemize}
+% ends tabela
+
+\newpage
+
+% segment tabela
+\paragraph{reservation\_and\_film\_and\_label}
+\subparagraph{}
+Tabela łącznikowa pomiędzy rezerwacją, a filmem z etykietą. Idea tabeli jest następująca: klient zarezerwował film w trakcie trwania jakiejś promocji (np. świątecznej).
+Jednak film aktualnie jest niedostępny. Mimo to, nawet po zakończeniu promocji, będzie mógł wypożyczyć film zgodnie z cennikiem jaki oferowała trwająca podczas rezerwacji promocja.
+I właśnie informacje o tym przechowujemy w tej tabeli.
+\subparagraph{pola:}
+\textbf{memberID (PK, FK:\underline{member}), filmID (PK, FK:\underline{film}),} \\\textbf{labelID (PK, FK:\underline{label}), mediumID(PK, FK:\underline{medium})}
+\subparagraph{unikalne pola, zestawy pól:}
+\begin{itemize}
+	\item (memberID, labelID, filmID, mediumID), \textit{unikalna czwórka: klient, film, etykieta, nośnik filmu}
+\end{itemize}
+% ends tabela
+
+% segment tabela
+\paragraph{category}
+\subparagraph{pola:}
+\textbf{categoryID (PK), categoryName}
+\subparagraph{unikalne pola, zestawy pól:}
+\begin{itemize}
+	\item categoryName, \textit{unikalna nazwa kategorii}
+\end{itemize}
+% ends tabela
+
+% segment tabela
+\paragraph{film\_and\_category}
+\subparagraph{pola:}
+\textbf{filmID (PK, FK:\underline{film}), categoryID (PK, FK:\underline{category})}
+\subparagraph{unikalne pola, zestawy pól:}
+\begin{itemize}
+	\item (filmID, categoryID), \textit{unikalna para: film i kategoria}
+\end{itemize}
+% ends tabela
+
+\newpage
+
+% segment tabela
+\paragraph{medium}
+\subparagraph{pola:}
+\textbf{mediumID (PK), mediumName, priceMultiply}
+\subparagraph{unikalne pola, zestawy pól:}
+\begin{itemize}
+	\item mediumName, \textit{unikalna nazwa nośnika pamięci (dvd, blu-ray)}
+\end{itemize}
+\subparagraph{wartości domyślne:}
+\begin{itemize}
+	\item priceMultiply, \textit{1.0}
+\end{itemize}
+% ends tabela
+
+% segment tabela
+\paragraph{item}
+\subparagraph{pola:}
+\textbf{filmID (PK, FK:\underline{film}), mediumID (PK, FK:\underline{medium})}
+\subparagraph{unikalne pola, zestawy pól:}
+\begin{itemize}
+	\item (filmID, mediumID), \textit{unikalna para: film i nośnik filmu}
+\end{itemize}
+% ends tabela
+
+% segment tabela
+\paragraph{copy}
+\subparagraph{pola:}
+\textbf{copyID (PK), filmID (FK:\underline{film}), mediumID (FK:\underline{medium}), onLoan}
+% ends tabela
+
+% segment tabela
+\paragraph{loan}
+\subparagraph{pola:}
+\textbf{copyID (PK, FK:\underline{copy}), memberID (FK:\underline{member})}, \\\textbf{outDate, dueDate}
+\subparagraph{unikalne pola, zestawy pól:}
+\begin{itemize}
+	\item (copyID, memberID), \textit{unikalna para: kopia filmu i klient}
+\end{itemize}
+\subparagraph{sprawdzanie poprawności danych:}
+\begin{itemize}
+	\item outDate, \textit{musi być równa dacie wprowadzenia rekordu}
+	\item dueDate, \textit{musi być większa od outDate}
+\end{itemize}
+\subparagraph{wartości domyślne:}
+\begin{itemize}
+	\item outDate, \textit{aktualna data}
+\end{itemize}
+% ends tabela
+
+% segment tabela
+\paragraph{loanhist}
+\subparagraph{pola:}
+\textbf{outDate (PK), copyID (PK, FK:\underline{copy}), memberID (FK:\underline{member}), dueDate, inDate}, fineAssessed, finePaid, fineWaived, remarks
+\subparagraph{unikalne pola, zestawy pól:}
+\begin{itemize}
+	\item (outDate, copyID), \textit{unikalna para: data wydania i numer kopii}
+\end{itemize}
+\subparagraph{sprawdzanie poprawności danych:}
+\begin{itemize}
+	\item inDate, \textit{musi być równa dacie wprowadzenia rekordu}
+	\item finePaid, \textit{musi być mniejsza lub równa różnicy kwot fineAssessed i fineWaived}
+\end{itemize}
+\subparagraph{wartości domyślne:}
+\begin{itemize}
+	\item inDate, \textit{aktualna data}
+\end{itemize}
+% ends tabela
+
+
+\end{document}
