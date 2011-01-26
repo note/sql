@@ -36,6 +36,11 @@ select * from view_films
 select * from view_topFilms
 select * from view_topClients
 
+--setMemberActive
+exec setMemberActive 25, 0 -- ma dzieci o memberID 1284 1285
+
+select * from member where memberID=1284
+
 select * from category
 select * from label
 select * from loan

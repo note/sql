@@ -226,6 +226,13 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 
 \section{Procedury}
 \subsection{Procedury modyfikujące}
+\paragraph{setMemberActive}
+\subparagraph{Argumenty:}
+@member_id - id użytkownika
+@active - 0 gdy chcemy ustawić na nieaktywnego, 1 w przeciwnym wypadku
+\subparagraph{Wartość zwracana: brak}
+\subparagraph{Opis:}
+Ustawia wartość pola active dla użytkownika. Propagacja na dzieci poprzez trigger tr_updateMember.
 \subsection{Procedury niemodyfikujące}
 
 \end{document}

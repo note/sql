@@ -10,6 +10,8 @@ begin
 	delete from member where memberID=@id
 end
 
+go
+
 --Returns discount in percentage. If loan can't be insterted then returns -1.
 --Also will not allow to make a loan for one who is keeping films too long
 create procedure insertLoan @copy_id int, @member_id int, @discount int OUTPUT
@@ -41,6 +43,21 @@ begin
 	end
 end
 
+go
+
+create procedure setMemberActive @member_id int, @active int
+as
+begin
+	if(@active<>0 AND @active<>1) begin
+		PRINT 'Drugi argument funkcji setMemberActive musi byæ wartoœci 0 lub 1'
+	end
+	else begin
+		UPDATE member SET active=@active WHERE memberID=@member_id
+	end
+end
+
+go
+
 --will not allow to make a reservation for one who is keeping films too long
 create procedure insertReservation @member_id int, @film_id int, @medium_id int
 as
@@ -54,6 +71,8 @@ begin
 		insert into reservation (memberID, mediumID, filmID, logDate) Values (@member_id, @medium_id, @film_id, GETDATE())
 	end
 end
+
+go
 
 /*	
  *	TRIGGERS
@@ -70,6 +89,8 @@ begin
 	end
 end
 
+go
+
 CREATE TRIGGER tr_updateJuvenile
 on juvenile
 after update
@@ -81,12 +102,27 @@ begin
 	end
 end
 
+go
+
 CREATE TRIGGER tr_deleteLoan
 ON loan
 AFTER DELETE
 AS BEGIN
 	INSERT INTO loanhist (outDate, copyID, memberID, dueDate) VALUES ((SELECT outDate from deleted), (SELECT copyID from deleted), (SELECT memberID from deleted), (SELECT dueDate from deleted)) --todo naliczanie kary
 END
+
+go
+
+CREATE TRIGGER tr_updateMember
+ON member
+AFTER UPDATE
+AS BEGIN
+	UPDATE member SET active=(SELECT active from inserted) WHERE memberID = ANY(
+		SELECT memberID from juvenile where adult_memberID=(select memberID from inserted)
+	)
+END
+
+go
 
 /*	
  *	VIEWS
@@ -101,6 +137,8 @@ END
  from member M
  join juvenile J on J.memberID = M.memberID
  join adult A on J.adult_memberID = A.memberID
+
+go
  
  create view view_films
  as
@@ -124,6 +162,8 @@ END
 	,(select COUNT(*) from copy C where C.filmid = F.filmID and C.onLoan = 0) as Dostepnych
 FROM film F
 
+go
+
 CREATE VIEW view_topFilms
 AS
 	SELECT TOP 10 filmID, title, SUM(wypozyczen) AS wypozyczen FROM
@@ -140,7 +180,9 @@ AS
 	GROUP BY f.filmID, f.title) c
 	GROUP BY c.filmID, c.title
 	ORDER BY SUM(wypozyczen) DESC
-	
+
+go
+
 CREATE VIEW view_topClients
 AS
 	SELECT TOP 10 firstname, lastname, SUM(wypozyczen) as wypozyczen from
