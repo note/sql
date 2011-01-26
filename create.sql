@@ -1,4 +1,6 @@
---create database OurRental
+create database OurRental
+drop database OurRental
+
 use OurRental
 create TABLE label (
 	labelID int NOT NULL PRIMARY KEY IDENTITY,
@@ -60,7 +62,7 @@ CREATE TABLE film_and_label (
 	FOREIGN KEY (filmID) references film(filmID),
 	FOREIGN KEY (labelID) references label(labelID),
 	PRIMARY KEY(filmID, labelID),
-	CHECK (expirationDate>GETDATE())
+	CHECK (expirationDate>GETDATE()),
 	CONSTRAINT FL_unique UNIQUE (filmID, labelID)
 )
 
@@ -69,7 +71,7 @@ CREATE TABLE film_and_category (
 	categoryID int NOT NULL,
 	FOREIGN KEY (filmID) references film(filmID) ON DELETE CASCADE,
 	FOREIGN KEY (categoryID) references category(categoryID) ON DELETE CASCADE,
-	PRIMARY KEY(filmID, categoryID)
+	PRIMARY KEY(filmID, categoryID),
 	CONSTRAINT FC_unique UNIQUE (filmID, categoryID)
 )
 
@@ -78,7 +80,7 @@ CREATE TABLE item (
 	mediumID int NOT NULL,
 	FOREIGN KEY (filmID) references film(filmID),
 	FOREIGN KEY (mediumID) references medium(mediumID),
-	PRIMARY KEY(filmID, mediumID)
+	PRIMARY KEY(filmID, mediumID),
 	CONSTRAINT item_unique UNIQUE (filmID, mediumID)
 )
 CREATE TABLE juvenile (
@@ -87,7 +89,7 @@ CREATE TABLE juvenile (
 	birthDate DATE NOT NULL,
 	FOREIGN KEY (memberID) references member(memberID) on delete cascade,
 	FOREIGN KEY (adult_memberID) references adult(memberID),
-	CONSTRAINT ck_birthDate CHECK (birthDate + 6575 > getdate()) and birthDate < GETDATE()) --defaultowo to getdate() + 18*365 dni + max 5 dni za lata przestepne
+	CONSTRAINT ck_birthDate CHECK (DATEADD(yy, 18, birthDate) > getdate() and birthDate < GETDATE()) --defaultowo to getdate() + 18*365 dni + max 5 dni za lata przestepne
  )
 
 CREATE TABLE copy (
@@ -110,7 +112,7 @@ CREATE TABLE reservation (
 	FOREIGN KEY (mediumID) references medium(mediumID),
 	PRIMARY KEY (memberID, mediumID, filmID),
 	CONSTRAINT ck_logDate CHECK(logDate=GETDATE()),
-	CHECK (acceptDate >= logDate)
+	CHECK (acceptDate >= logDate),
 	CONSTRAINT reservation_unique UNIQUE (memberID, mediumID, filmID)
 )
 
@@ -122,7 +124,7 @@ CREATE TABLE loan (
 	FOREIGN KEY (copyID) references copy(copyID),
 	FOREIGN KEY (memberID) references member(memberID),
 	CONSTRAINT ck_outDate CHECK(outDate=GETDATE()),
-	CHECK (dueDate>outDate)
+	CHECK (dueDate>outDate),
 	CONSTRAINT loan_unique UNIQUE (memberID, copyID)
 )
 
@@ -140,7 +142,7 @@ CREATE TABLE loanhist (
 	FOREIGN KEY (memberID) references member(memberID),
 	PRIMARY KEY (outDate, copyID),
 	CONSTRAINT ck_inDate CHECK(inDate=GETDATE()),
-	CHECK (finePaid <= fineAssessed-fineWaived)
+	CHECK (finePaid <= fineAssessed-fineWaived),
 	CONSTRAINT loanhist_unique UNIQUE (outDate, copyID)
 )
 
