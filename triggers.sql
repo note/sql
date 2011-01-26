@@ -55,43 +55,6 @@ begin
 	end
 end
 
-create procedure selectTopClients
-as
-begin
-	SELECT TOP 10 firstname, lastname, SUM(wypozyczen) as wypozyczen from
-	(SELECT m.memberID, m.firstname, m.lastname, COUNT(*) AS wypozyczen FROM member m
-	INNER JOIN loanhist lh ON m.memberID=lh.memberID
-	WHERE DATEDIFF(dd, outDate, GETDATE())<=30
-	GROUP BY m.memberID, m.firstname, m.lastname
-		--order by COUNT(*) DESC
-	UNION
-	SELECT m.memberID, m.firstname, m.lastname, COUNT(*) AS wypozyczen FROM member m
-	INNER JOIN loan l ON m.memberID=l.memberID
-	WHERE DATEDIFF(dd, outDate, GETDATE())<=30
-	GROUP BY m.memberID, m.firstname, m.lastname) c
-	GROUP BY c.memberID, c.firstname, c.lastname
-	ORDER BY SUM(wypozyczen) DESC
-end
-
-create procedure selectTopFilms
-as
-begin
-	SELECT TOP 10 filmID, title, SUM(wypozyczen) AS wypozyczen FROM
-	(SELECT f.filmID, f.title, COUNT(*) AS wypozyczen FROM film f
-	INNER JOIN copy c ON f.filmID=c.filmID
-	INNER JOIN loan l ON c.copyID=l.copyID
-	WHERE DATEDIFF(dd, outDate, GETDATE())<=30
-	GROUP BY f.filmID, f.title
-	UNION
-	SELECT f.filmID, f.title, COUNT(*) AS wypozyczen FROM film f
-	INNER JOIN copy c ON f.filmID=c.filmID
-	INNER JOIN loanhist lh ON c.copyID=lh.copyID
-	WHERE DATEDIFF(dd, outDate, GETDATE())<=30
-	GROUP BY f.filmID, f.title) c
-	GROUP BY c.filmID, c.title
-	ORDER BY SUM(wypozyczen) DESC
-end
-
 /*	
  *	TRIGGERS
  */
@@ -160,3 +123,36 @@ END
 	,(select count(*) from copy C where C.filmid =  F.filmID) as Kopie
 	,(select COUNT(*) from copy C where C.filmid = F.filmID and C.onLoan = 0) as Dostepnych
 FROM film F
+
+CREATE VIEW view_topFilms
+AS
+	SELECT TOP 10 filmID, title, SUM(wypozyczen) AS wypozyczen FROM
+	(SELECT f.filmID, f.title, COUNT(*) AS wypozyczen FROM film f
+	INNER JOIN copy c ON f.filmID=c.filmID
+	INNER JOIN loan l ON c.copyID=l.copyID
+	WHERE DATEDIFF(dd, outDate, GETDATE())<=30
+	GROUP BY f.filmID, f.title
+	UNION
+	SELECT f.filmID, f.title, COUNT(*) AS wypozyczen FROM film f
+	INNER JOIN copy c ON f.filmID=c.filmID
+	INNER JOIN loanhist lh ON c.copyID=lh.copyID
+	WHERE DATEDIFF(dd, outDate, GETDATE())<=30
+	GROUP BY f.filmID, f.title) c
+	GROUP BY c.filmID, c.title
+	ORDER BY SUM(wypozyczen) DESC
+	
+CREATE VIEW view_topClients
+AS
+	SELECT TOP 10 firstname, lastname, SUM(wypozyczen) as wypozyczen from
+	(SELECT m.memberID, m.firstname, m.lastname, COUNT(*) AS wypozyczen FROM member m
+	INNER JOIN loanhist lh ON m.memberID=lh.memberID
+	WHERE DATEDIFF(dd, outDate, GETDATE())<=30
+	GROUP BY m.memberID, m.firstname, m.lastname
+		--order by COUNT(*) DESC
+	UNION
+	SELECT m.memberID, m.firstname, m.lastname, COUNT(*) AS wypozyczen FROM member m
+	INNER JOIN loan l ON m.memberID=l.memberID
+	WHERE DATEDIFF(dd, outDate, GETDATE())<=30
+	GROUP BY m.memberID, m.firstname, m.lastname) c
+	GROUP BY c.memberID, c.firstname, c.lastname
+	ORDER BY SUM(wypozyczen) DESC

@@ -33,9 +33,8 @@ select * from copy
 select * from view_members
 select * from view_films
 
-exec selectTopClients
-exec selectTopFilms
-
+select * from view_topFilms
+select * from view_topClients
 
 select * from category
 select * from label
