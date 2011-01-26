@@ -5,7 +5,7 @@ select * from category
 select * from film_and_category
 delete from category where categoryID = 8
 
---powinno nie zadzialac - za kroki numer telefonu:
+--powinno nie zadzialac - za krotki numer telefonu:
 insert into member(lastname, firstname,phone, active) values ('Gajecki', 'Marek', '486575122', 1)
 
 --Zakomentowalem, bo jak mowila dr Zygmunt, usuwanie memberow to zly pomysl
@@ -32,6 +32,9 @@ select * from copy
 --widoki testing
 select * from view_members
 select * from view_films
+
+exec selectTopClients
+exec selectTopFilms
 
 
 select * from category

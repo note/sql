@@ -16,7 +16,7 @@
 \section{Struktura bazy}
 \subsection{Schemat}
 \begin{center}
-	\includegraphics[width=1.00\textwidth]{bazyNew.png}
+	%\includegraphics[width=1.00\textwidth]{bazyNew.png}
 	\captionof{figure}{Schemat bazy danych}
 	\label{fig:schemat}
 \end{center}
@@ -223,6 +223,22 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 	\item inDate, \textit{aktualna data}
 \end{itemize}
 % ends tabela
+
+\section{Procedury}
+\subsection{Procedury modyfikujące}
+\subsection{Procedury niemodyfikujące}
+
+\paragraph{selectTopFilms}
+\subparagraph{Argumenty: brak}
+\subparagraph{Wartosć zwracana: brak}
+\subparagraph{Opis:}
+Wykonuje zapytanie zwracające 10 najczęściej wypożyczanych filmów ostatniego miesiąca (uwzględnia ostatnie 30 dni).
+
+\paragraph{selectTopClients}
+\subparagraph{Argumenty: brak}
+\subparagraph{Wartosć zwracana: brak}
+\subparagraph{Opis:}
+Wykonuje zapytanie zwracające 10 klientów, którzy wypożyczyli najwięcej filmów w przeciągu ostatniego miesiąca (uwzględnia ostatnie 30 dni).
 
 
 \end{document}

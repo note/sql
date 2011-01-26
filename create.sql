@@ -89,7 +89,7 @@ CREATE TABLE juvenile (
 	birthDate DATE NOT NULL,
 	FOREIGN KEY (memberID) references member(memberID) on delete cascade,
 	FOREIGN KEY (adult_memberID) references adult(memberID),
-	CONSTRAINT ck_birthDate CHECK (DATEADD(yy, 18, birthDate) > getdate() and birthDate < GETDATE()) --defaultowo to getdate() + 18*365 dni + max 5 dni za lata przestepne
+	CONSTRAINT ck_birthDate CHECK (DATEADD(dd, 6575, birthDate) > getdate() and birthDate < GETDATE()) --defaultowo to getdate() + 18*365 dni + max 5 dni za lata przestepne
  )
 
 CREATE TABLE copy (
@@ -128,6 +128,8 @@ CREATE TABLE loan (
 	CONSTRAINT loan_unique UNIQUE (memberID, copyID)
 )
 
+ALTER TABLE loan DROP constraint  ck_outDate -- nie wiem czemu,ale z tym checkiem nie mozna dodawac loanow, todo
+
 CREATE TABLE loanhist (
 	outDate DATE NOT NULL,
 	copyID int NOT NULL,
@@ -146,6 +148,7 @@ CREATE TABLE loanhist (
 	CONSTRAINT loanhist_unique UNIQUE (outDate, copyID)
 )
 
+ALTER TABLE loanhist DROP constraint ck_inDate -- nie wiem czemu,ale z tym checkiem nie mozna dodawac loanhistow, todo
 
 CREATE TABLE reservation_and_film_and_label (
 	memberID int NOT NULL,
