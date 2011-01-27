@@ -17,7 +17,9 @@ go
 create procedure insertLoan @copy_id int, @member_id int, @discount int OUTPUT
 as
 begin
-	if(@member_id.active == 1) begin
+	declare @active int
+	select @active = active from member where memberID = @member_id
+	if(@active = 1) begin
 		declare @rowcount int
 		set @discount=0
 		select @rowcount=COUNT(*) from loan where memberID=@member_id
@@ -64,7 +66,9 @@ go
 create procedure insertReservation @member_id int, @film_id int, @medium_id int
 as
 begin
-	if(@member_id.active == 1) begin
+	declare @active int
+	select @active = active from member where memberID = @member_id
+	if(@active = 1) begin
 		declare @time_delay int
 		select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
 		if (@time_delay > 0) begin
