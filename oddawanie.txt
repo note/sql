@@ -1,0 +1,11 @@
+1. Uzytkownikowi gubi sie karta i jestesmy w stanie zablokowac ja i dodac mu nowa (czyli nowy wpis w bazie dla tego samego usera)
+	a)sprawdzamy czy istnieje juz aktywny, jak tak to spadaj;
+	b) dodajemy birthdate do membera (i usuwamy z juvenile)
+	c) unique(firstname, lastname, birthdate)
+	d) zmieniamy sposoby weryfikacji juvenile (patrz 1b)
+2.	Trigger usuwajacy z 'reservation' zaegle rezerwacje wykonywany codziennie przez serwer
+3.	Wywalic 'not null' z expirationDate dla 'label'
+4.	Komunikaty w przypadku bledow. Trzeba im sie przypatrzec.
+5.  Dopisz jeszcze trigger na member update -> zapewnianie, zeby nie bylo aktywnych 2 memberow o tym samym first-, lastname i birthdate
+6.	Zmienic kod generujacy userow
+7.	Dodac rekordy do loan i loanhist
