@@ -95,3 +95,13 @@ as begin
 	end
 end
 go
+
+
+--procedura usuwajaca zaegle rezerwacje
+create procedure refreshReservation
+as
+begin
+	delete from reservation where acceptDate > dateadd(day, 14, getdate())
+end
+
+go
