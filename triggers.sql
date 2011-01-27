@@ -18,7 +18,7 @@ create procedure insertLoan @copy_id int, @member_id int, @discount int OUTPUT
 as
 begin
 	declare @active int
-	select @active = active from member where memberID = @member_id
+	select @active=active from member where memberID = @member_id
 	if(@active = 1) begin
 		declare @rowcount int
 		set @discount=0
@@ -67,7 +67,7 @@ create procedure insertReservation @member_id int, @film_id int, @medium_id int
 as
 begin
 	declare @active int
-	select @active = active from member where memberID = @member_id
+	select @active=active from member where memberID = @member_id
 	if(@active = 1) begin
 		declare @time_delay int
 		select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
@@ -176,18 +176,18 @@ go
 CREATE VIEW view_topFilms
 AS
 	SELECT TOP 10 filmID, title, director, SUM(wypozyczen) AS wypozyczen FROM
-	(SELECT f.filmID, f.title, COUNT(*) AS wypozyczen FROM film f
+	(SELECT f.filmID, f.title, f.director, COUNT(*) AS wypozyczen FROM film f
 	INNER JOIN copy c ON f.filmID=c.filmID
 	INNER JOIN loan l ON c.copyID=l.copyID
 	WHERE DATEDIFF(dd, outDate, GETDATE())<=30
-	GROUP BY f.filmID, f.title
+	GROUP BY f.filmID, f.title, f.director
 	UNION
-	SELECT f.filmID, f.title, COUNT(*) AS wypozyczen FROM film f
+	SELECT f.filmID, f.title, f.director, COUNT(*) AS wypozyczen FROM film f
 	INNER JOIN copy c ON f.filmID=c.filmID
 	INNER JOIN loanhist lh ON c.copyID=lh.copyID
 	WHERE DATEDIFF(dd, outDate, GETDATE())<=30
-	GROUP BY f.filmID, f.title) c
-	GROUP BY c.filmID, c.title
+	GROUP BY f.filmID, f.title, f.director) c
+	GROUP BY c.filmID, c.title, c.director
 	ORDER BY SUM(wypozyczen) DESC
 
 go
