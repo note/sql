@@ -82,32 +82,6 @@ go
  *	TRIGGERS
  */
 
-CREATE TRIGGER tr_insertJuvenile
-on juvenile
-after insert
-as
-begin
-	IF DATEDIFF(YEAR, (select birthDate from inserted),  GETDATE())>18  --wazne zalozenie - jak ukonczy rocznikowo 18 lat to uznajemy, ze jest pelnoletni'
-	begin
-		UPDATE member SET active=0 WHERE memberID=(SELECT memberID from inserted)
-	end
-end
-
-go
-
-CREATE TRIGGER tr_updateJuvenile
-on juvenile
-after update
-as
-begin
-	IF DATEDIFF(YEAR, (SELECT birthDate from inserted),  GETDATE())>18  --wazne zalozenie - jak ukonczy rocznikowo 18 lat to uznajemy, ze jest pelnoletni'
-	begin
-		UPDATE member SET active=0 WHERE memberID=(SELECT memberID from inserted)
-	end
-end
-
-go
-
 CREATE TRIGGER tr_deleteLoan
 ON loan
 AFTER DELETE

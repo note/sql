@@ -228,8 +228,11 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 % #########################################################################################################
 
 \newpage
+\section{Procedury, Triggery, Widoki}
 
-\section{Procedury}
+
+
+\subsection{Procedury}
 % segment procedura
 \paragraph{setMemberActive}
 Ustawia wartość pola active dla użytkownika. Propagacja na dzieci poprzez trigger tr\_updateMember.
@@ -284,20 +287,7 @@ Dodaje rekord do tabeli rezerwacji. Zablokuje możliwość dodania rekordu gdy k
 %	TRIGGERY
 % #########################################################################################################
 
-\section{Triggery}
-
-% segment trigger
-\paragraph{tr\_insertJuvenile}
-Jeśli dodany "juvenile" jest pełnoletni ustawi jego stan na 0.
-\textbf{CZY POTRZEBNE? PRZECIEŻ CHECK JUŻ TO ROBI}
-% ends trigger
-
-% segment trigger
-\paragraph{tr\_updateJuvenile}
-Jeśli dodany "juvenile" jest pełnoletni ustawi jego stan na 0.
-\textbf{ROBI TO SAMO CO POPRZEDNI. TO SAMO PYTANIE}
-% ends trigger
-
+\subsection{Triggery}
 % segment trigger
 \paragraph{tr\_deleteLoan}
 Usuwany rekod z tabeli \underline{loan} trafia do tabeli \underline{loanhist}.
@@ -315,7 +305,7 @@ Zmienia stan użytkownika.
 %	WIDOKI
 % #########################################################################################################
 
-\section{Widoki}
+\subsection{Widoki}
 
 % segment widok
 \paragraph{view\_members}
