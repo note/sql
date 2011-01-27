@@ -80,14 +80,14 @@ begin
 	end else PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'jest nieaktywny'
 end
 
-create procedure insertAdult @firstname varchar(50), @lastname varchar(50), @phone char(11), @email varchar(100), @street varchar (50), @homeNo varchar (6), @flatNo varchar (6), @city varchar (50), @state varchar (50), @zip char(5)
+create procedure insertAdult @firstname varchar(50), @lastname varchar(50), @phone char(11), @email varchar(100), @birthdate date, @street varchar (50), @homeNo varchar (6), @flatNo varchar (6), @city varchar (50), @state varchar (50), @zip char(5)
 as begin
-	insert into view_members (firstname, lastname, phone, email, street, homeNo, flatNo, city, state, zip) values(@firstname, @lastname, @phone, @email, @street, @homeNo, @flatNo, @city, @state, @zip)
+	insert into view_members (firstname, lastname, phone, email, birthDate, street, homeNo, flatNo, city, state, zip) values(@firstname, @lastname, @phone, @email, @birthdate, @street, @homeNo, @flatNo, @city, @state, @zip)
 end
 go
 
 create procedure insertJuvenile @firstname varchar(50), @lastname varchar(50), @phone char(11), @email varchar(100), @birthdate date, @adult_id int
 as begin
-	insert into view_members (firstname, lastname, phone, email, birthdate, adult_memberID) values(@firstname, @lastname, @phone, @email, @birthdate, @adult_id)
+	insert into view_members (firstname, lastname, phone, email, birthDate, adult_memberID) values(@firstname, @lastname, @phone, @email, @birthdate, @adult_id)
 end
 go
