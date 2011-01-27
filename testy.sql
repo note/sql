@@ -36,9 +36,9 @@ select * from view_members
 insert into view_members (firstname, lastname, phone, adultid) values('lou', 'reed', '12345678901')
 select * from view_films
 exec insertAdult 'patry333k', 'fadf', '21345678901', 'jakis@mail.pl', 'czarnowiejska', '12', '54', 'krakow', 'malopolska', '33233'
-exec insertJuvenile 'Asafa', 'fadf', '21345678901', 'jakis@mail.pl', 'czarnowiejska', '12', '54', 'krakow', 'malopolska', '33233'
+exec insertJuvenile 'Asafa', 'fadf', '21345678901', 'jakis@mail.pl', '11/10/99', 814
 select top 5 * from member order by memberID desc
-
+select top 5 * from juvenile order by memberID desc
 select * from view_topFilms
 select * from view_topClients
 
