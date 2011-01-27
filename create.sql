@@ -50,9 +50,7 @@ CREATE TABLE adult (
 	city VARCHAR(50) NOT NULL,
 	state VARCHAR(50) NOT NULL,
 	zip CHAR(5) NOT NULL,
-	expirationDate DATE NOT NULL default getdate() + 1827,	--defaultowo to getdate() + 5*365 dni + max 2 dni za lata przestepne
 	FOREIGN KEY (memberID) references member(memberID),
-	CONSTRAINT ck_expirationDate CHECK(expirationDate>GETDATE()),
 	CONSTRAINT ck_zip CHECK(LEN(zip) = 5)
 )
 
