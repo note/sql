@@ -146,7 +146,7 @@ go
  
  create view view_films
  as
- SELECT F.filmID, F.title
+ SELECT F.filmID, F.title, F.director
 	,(SELECT CAST(M.mediumName + ', ' AS VARCHAR(MAX))
 		FROM item I
 		join medium M on M.mediumID = I.mediumID
@@ -170,7 +170,7 @@ go
 
 CREATE VIEW view_topFilms
 AS
-	SELECT TOP 10 filmID, title, SUM(wypozyczen) AS wypozyczen FROM
+	SELECT TOP 10 filmID, title, director, SUM(wypozyczen) AS wypozyczen FROM
 	(SELECT f.filmID, f.title, COUNT(*) AS wypozyczen FROM film f
 	INNER JOIN copy c ON f.filmID=c.filmID
 	INNER JOIN loan l ON c.copyID=l.copyID

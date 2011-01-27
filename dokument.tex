@@ -230,7 +230,6 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 \newpage
 
 \section{Procedury}
-\subsection{Procedury modyfikujące}
 % segment procedura
 \paragraph{setMemberActive}
 Ustawia wartość pola active dla użytkownika. Propagacja na dzieci poprzez trigger tr\_updateMember.
@@ -255,7 +254,7 @@ Usuwa użytkownika. Przy usuwaniu rodzica usuwa wszystkie jego dzieci.
 % segment procedura
 \paragraph{insertLoan}
 Dodaje rekord do tabeli wypożyczeń. Zwraca zniżkę w procentach dla klientów, którzy w przeciągu ostatnich 3 miesięcy pożyczyli co najmniej 3 filmy.
-Zablokuje możliwość dodania rekordu gdy klient ma już wypożyczone 6 filmów lub gdy chociaż jeden film przetrzymuje.
+Zablokuje możliwość dodania rekordu gdy klient ma już wypożyczone 6 filmów lub gdy przetrzymuje chociaż jeden film lub gdy jest nieaktywny.
 \subparagraph{Argumenty:}
 \begin{itemize}
 	\item @member\_id, \textit{id użytkownika}
@@ -267,6 +266,79 @@ Zablokuje możliwość dodania rekordu gdy klient ma już wypożyczone 6 filmów
 \end{itemize}
 % ends procedura
 
-\subsection{Procedury niemodyfikujące}
+% segment procedura
+\paragraph{insertReservation}
+Dodaje rekord do tabeli rezerwacji. Zablokuje możliwość dodania rekordu gdy klient ma już wypożyczone 6 filmów lub gdy przetrzymuje chociaż jeden film lub gdy jest nieaktywny.
+\subparagraph{Argumenty:}
+\begin{itemize}
+	\item @member\_id, \textit{id użytkownika}
+	\item @film\_id, \textit{id filmu}
+	\item @medium\_id, \textit{id nośnika filmu}
+\end{itemize}
+\subparagraph{Wartość zwracana: brak}
+% ends procedura
+
+
+
+% #########################################################################################################
+%	TRIGGERY
+% #########################################################################################################
+
+\section{Triggery}
+
+% segment trigger
+\paragraph{tr\_insertJuvenile}
+Jeśli dodany "juvenile" jest pełnoletni ustawi jego stan na 0.
+\textbf{CZY POTRZEBNE? PRZECIEŻ CHECK JUŻ TO ROBI}
+% ends trigger
+
+% segment trigger
+\paragraph{tr\_updateJuvenile}
+Jeśli dodany "juvenile" jest pełnoletni ustawi jego stan na 0.
+\textbf{ROBI TO SAMO CO POPRZEDNI. TO SAMO PYTANIE}
+% ends trigger
+
+% segment trigger
+\paragraph{tr\_deleteLoan}
+Usuwany rekod z tabeli \underline{loan} trafia do tabeli \underline{loanhist}.
+\textbf{TODO: NALICZANIE KARY}
+% ends trigger
+
+% segment trigger
+\paragraph{tr\_updateMember}
+Zmienia stan użytkownika.
+% ends trigger
+
+
+
+% #########################################################################################################
+%	WIDOKI
+% #########################################################################################################
+
+\section{Widoki}
+
+% segment widok
+\paragraph{view\_members}
+Wyświetla wszystkie informacje o wszystkich klientach w jednej tabeli.
+% ends widok
+
+% segment widok
+\paragraph{view\_films}
+Wyświetla wszystkie informacje o wszystkich filmach w jednej tabeli.
+% ends widok
+
+% segment widok
+\paragraph{view\_topFilms}
+Wyświetla listę 10 najczęściej wypożyczanych filmów w ostatnim miesiącu.
+% ends widok
+
+% segment widok
+\paragraph{view\_topClients}
+Wyświetla listę 10 najlepszych klientów z ostatniego miesiąca.
+% ends widok
+
+
+
+
 
 \end{document}
