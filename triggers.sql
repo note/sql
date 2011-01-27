@@ -17,30 +17,32 @@ go
 create procedure insertLoan @copy_id int, @member_id int, @discount int OUTPUT
 as
 begin
-	declare @rowcount int
-	set @discount=0
-	select @rowcount=COUNT(*) from loan where memberID=@member_id
+	if(@member_id.active == 1) begin
+		declare @rowcount int
+		set @discount=0
+		select @rowcount=COUNT(*) from loan where memberID=@member_id
 
-	-- warunek na przetrzymywanie filmow:
-	declare @time_delay int
-	select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
-	
-	if(@rowcount<6) and (@time_delay = 0) begin
-		select @rowcount=COUNT(*) from loanhist where memberID=@member_id
+		-- warunek na przetrzymywanie filmow:
+		declare @time_delay int
+		select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
+
+		if(@rowcount<6) and (@time_delay = 0) begin
+			select @rowcount=COUNT(*) from loanhist where memberID=@member_id and (DATEADD(dd, 92, outDate)) > getdate();
 		
-		if(@rowcount>3) begin
-			set @discount=10
-		end
+			if(@rowcount>=3) begin
+				set @discount=10
+			end
 			
-		insert into loan (copyID, memberID, outDate, dueDate) Values (@copy_id, @member_id, GETDATE(), GETDATE()+4)
-	end
-	else if(@rowcount >= 6) begin
-		set @discount=-1
-		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' ma juz wypozyczonych 6 filmow'
-	end
-	else begin
-		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'przetrzymuje filmy'
-	end
+			insert into loan (copyID, memberID, outDate, dueDate) Values (@copy_id, @member_id, GETDATE(), GETDATE()+4)
+		end
+		else if(@rowcount >= 6) begin
+			set @discount=-1
+			PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' ma juz wypozyczonych 6 filmow'
+		end
+		else begin
+			PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'przetrzymuje filmy'
+		end
+	end else PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'jest nieaktywny'
 end
 
 go
@@ -49,7 +51,7 @@ create procedure setMemberActive @member_id int, @active int
 as
 begin
 	if(@active<>0 AND @active<>1) begin
-		PRINT 'Drugi argument funkcji setMemberActive musi byæ wartoœci 0 lub 1'
+		PRINT 'Drugi argument funkcji setMemberActive musi byc wartosci 0 lub 1'
 	end
 	else begin
 		UPDATE member SET active=@active WHERE memberID=@member_id
@@ -62,14 +64,16 @@ go
 create procedure insertReservation @member_id int, @film_id int, @medium_id int
 as
 begin
-	declare @time_delay int
-	select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
-	if (@time_delay > 0) begin
-		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' przetrzymuje filmy'
-	end
-	else begin			
-		insert into reservation (memberID, mediumID, filmID, logDate) Values (@member_id, @medium_id, @film_id, GETDATE())
-	end
+	if(@member_id.active == 1) begin
+		declare @time_delay int
+		select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
+		if (@time_delay > 0) begin
+			PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' przetrzymuje filmy'
+		end
+		else begin			
+			insert into reservation (memberID, mediumID, filmID, logDate) Values (@member_id, @medium_id, @film_id, GETDATE())
+		end
+	end else PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'jest nieaktywny'
 end
 
 create procedure insertAdult @firstname varchar(50), @lastname varchar(50), @phone char(11), @email varchar(100), @street varchar (50), @homeNo varchar (6), @flatNo varchar (6), @city varchar (50), @state varchar (50), @zip char(5)
@@ -87,32 +91,6 @@ go
 /*	
  *	TRIGGERS
  */
-
-CREATE TRIGGER tr_insertJuvenile
-on juvenile
-after insert
-as
-begin
-	IF DATEDIFF(YEAR, (select birthDate from inserted),  GETDATE())>18  --wazne zalozenie - jak ukonczy rocznikowo 18 lat to uznajemy, ze jest pelnoletni'
-	begin
-		UPDATE member SET active=0 WHERE memberID=(SELECT memberID from inserted)
-	end
-end
-
-go
-
-CREATE TRIGGER tr_updateJuvenile
-on juvenile
-after update
-as
-begin
-	IF DATEDIFF(YEAR, (SELECT birthDate from inserted),  GETDATE())>18  --wazne zalozenie - jak ukonczy rocznikowo 18 lat to uznajemy, ze jest pelnoletni'
-	begin
-		UPDATE member SET active=0 WHERE memberID=(SELECT memberID from inserted)
-	end
-end
-
-go
 
 CREATE TRIGGER tr_deleteLoan
 ON loan
@@ -169,7 +147,7 @@ go
  
  create view view_films
  as
- SELECT F.filmID, F.title
+ SELECT F.filmID, F.title, F.director
 	,(SELECT CAST(M.mediumName + ', ' AS VARCHAR(MAX))
 		FROM item I
 		join medium M on M.mediumID = I.mediumID
@@ -193,7 +171,7 @@ go
 
 CREATE VIEW view_topFilms
 AS
-	SELECT TOP 10 filmID, title, SUM(wypozyczen) AS wypozyczen FROM
+	SELECT TOP 10 filmID, title, director, SUM(wypozyczen) AS wypozyczen FROM
 	(SELECT f.filmID, f.title, COUNT(*) AS wypozyczen FROM film f
 	INNER JOIN copy c ON f.filmID=c.filmID
 	INNER JOIN loan l ON c.copyID=l.copyID
