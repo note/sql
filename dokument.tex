@@ -254,12 +254,17 @@ Usuwa użytkownika. Przy usuwaniu rodzica usuwa wszystkie jego dzieci.
 
 % segment procedura
 \paragraph{insertLoan}
-Dodaje rekord do tabeli wypożyczeń.
+Dodaje rekord do tabeli wypożyczeń. Zwraca zniżkę w procentach dla klientów, którzy w przeciągu ostatnich 3 miesięcy pożyczyli co najmniej 3 filmy.
+Zablokuje możliwość dodania rekordu gdy klient ma już wypożyczone 6 filmów lub gdy chociaż jeden film przetrzymuje.
 \subparagraph{Argumenty:}
 \begin{itemize}
 	\item @member\_id, \textit{id użytkownika}
+	\item @copy\_id, \textit{id kopii filmu}
 \end{itemize}
-\subparagraph{Wartość zwracana: brak}
+\subparagraph{Wartość zwracana:}
+\begin{itemize}
+	\item @discount, \textit{rabat dla klienta}
+\end{itemize}
 % ends procedura
 
 \subsection{Procedury niemodyfikujące}

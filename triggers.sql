@@ -17,30 +17,32 @@ go
 create procedure insertLoan @copy_id int, @member_id int, @discount int OUTPUT
 as
 begin
-	declare @rowcount int
-	set @discount=0
-	select @rowcount=COUNT(*) from loan where memberID=@member_id
+	if(@member_id.active == 1) begin
+		declare @rowcount int
+		set @discount=0
+		select @rowcount=COUNT(*) from loan where memberID=@member_id
 
-	-- warunek na przetrzymywanie filmow:
-	declare @time_delay int
-	select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
-	
-	if(@rowcount<6) and (@time_delay = 0) begin
-		select @rowcount=COUNT(*) from loanhist where memberID=@member_id and (DATEADD(dd, 92, outDate)) > getdate();
+		-- warunek na przetrzymywanie filmow:
+		declare @time_delay int
+		select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
+
+		if(@rowcount<6) and (@time_delay = 0) begin
+			select @rowcount=COUNT(*) from loanhist where memberID=@member_id and (DATEADD(dd, 92, outDate)) > getdate();
 		
-		if(@rowcount>=3) begin
-			set @discount=10
-		end
+			if(@rowcount>=3) begin
+				set @discount=10
+			end
 			
-		insert into loan (copyID, memberID, outDate, dueDate) Values (@copy_id, @member_id, GETDATE(), GETDATE()+4)
-	end
-	else if(@rowcount >= 6) begin
-		set @discount=-1
-		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' ma juz wypozyczonych 6 filmow'
-	end
-	else begin
-		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'przetrzymuje filmy'
-	end
+			insert into loan (copyID, memberID, outDate, dueDate) Values (@copy_id, @member_id, GETDATE(), GETDATE()+4)
+		end
+		else if(@rowcount >= 6) begin
+			set @discount=-1
+			PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' ma juz wypozyczonych 6 filmow'
+		end
+		else begin
+			PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'przetrzymuje filmy'
+		end
+	end else PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'jest nieaktywny'
 end
 
 go
@@ -62,14 +64,16 @@ go
 create procedure insertReservation @member_id int, @film_id int, @medium_id int
 as
 begin
-	declare @time_delay int
-	select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
-	if (@time_delay > 0) begin
-		PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' przetrzymuje filmy'
-	end
-	else begin			
-		insert into reservation (memberID, mediumID, filmID, logDate) Values (@member_id, @medium_id, @film_id, GETDATE())
-	end
+	if(@member_id.active == 1) begin
+		declare @time_delay int
+		select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
+		if (@time_delay > 0) begin
+			PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' przetrzymuje filmy'
+		end
+		else begin			
+			insert into reservation (memberID, mediumID, filmID, logDate) Values (@member_id, @medium_id, @film_id, GETDATE())
+		end
+	end else PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'jest nieaktywny'
 end
 
 go
