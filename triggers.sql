@@ -28,18 +28,20 @@ END
 
 go
 
-CREATE TRIGGER tr_insertViewMembers
+create TRIGGER tr_insertViewMembers
 on view_members
 INSTEAD OF INSERT
 AS BEGIN
 	INSERT INTO member (lastname, firstname, birthDate, phone, email) values ((select lastname from inserted), (select firstname from inserted), (select birthDate from inserted), (select phone from inserted), (select email from inserted))
 	declare @adult_id int
 	SET @adult_id = (SELECT adultid from inserted)
-	IF @adult_id is null begin
+	IF (@adult_id is null) and (dateadd(year, 18, (select birthDate from inserted)) <= getdate()) begin
 		INSERT INTO adult (memberID, street, homeNo, flatNo, city, state, zip) VALUES ((SELECT @@IDENTITY), (select street from inserted), (select homeNo from inserted), (select flatNo from inserted), (select city from inserted), (select state from inserted), (select zip from inserted))
 	end
-	else begin
+	else if dateadd(year, 18, (select birthDate from inserted)) > getdate() begin
 		INSERT INTO juvenile (memberID, adult_memberid) values ((SELECT @@IDENTITY), @adult_id)
+	end else begin 
+		PRINT 'Probujesz dodac osobe dorosla do juvenile'
 	end
 END
 

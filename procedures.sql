@@ -79,7 +79,6 @@ begin
 		end
 	end else PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'jest nieaktywny'
 end
-
 go
 
 create procedure insertAdult @firstname varchar(50), @lastname varchar(50), @phone char(11), @email varchar(100), @birthdate date, @street varchar (50), @homeNo varchar (6), @flatNo varchar (6), @city varchar (50), @state varchar (50), @zip char(5)
@@ -90,12 +89,9 @@ go
 
 create procedure insertJuvenile @firstname varchar(50), @lastname varchar(50), @phone char(11), @email varchar(100), @birthdate date, @adult_id int
 as begin
-	if (@birthDate > getdate() + 6575) begin	-- sprawdzam, czy nie ma wiecej niz 18 lat
-		insert into view_members (firstname, lastname, phone, email, birthDate, adultID) values(@firstname, @lastname, @phone, @email, @birthdate, @adult_id)
-	end else begin
-		PRINT 'Probujesz dodac do juvenila osobe dorosla'
-	end
+	insert into view_members (firstname, lastname, phone, email, birthDate, adultID) values(@firstname, @lastname, @phone, @email, @birthdate, @adult_id)
 end
+
 go
 
 
