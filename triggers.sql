@@ -72,6 +72,16 @@ begin
 	end
 end
 
+create procedure insertAdult @firstname varchar(50), @lastname varchar(50), @phone char(11), @email varchar(100), @street varchar (50), @homeNo varchar (6), @flatNo varchar (6), @city varchar (50), @state varchar (50), @zip char(5)
+as begin
+	insert into view_members (firstname, lastname, phone, email, street, homeNo, flatNo, city, state, zip) values(@firstname, @lastname, @phone, @email, @street, @homeNo, @flatNo, @city, @state, @zip)
+end
+go
+
+create procedure insertJuvenile @firstname varchar(50), @lastname varchar(50), @phone char(11), @email varchar(100), @birthdate date, @adult_id int
+as begin
+	insert into view_members (firstname, lastname, phone, email, birthdate, adult_memberID) values(@firstname, @lastname, @phone, @email, @birthdate, @adult_id)
+end
 go
 
 /*	
@@ -124,12 +134,29 @@ END
 
 go
 
+CREATE TRIGGER tr_insertViewMembers
+on view_members
+INSTEAD OF INSERT
+AS BEGIN
+	INSERT INTO member (lastname, firstname, phone, email) values ((select lastname from inserted), (select firstname from inserted), (select phone from inserted), (select email from inserted))
+	declare @adult_id int
+	SET @adult_id = (SELECT adultid from inserted)
+	IF @adult_id is null begin
+		INSERT INTO adult (memberID, street, homeNo, flatNo, city, state, zip) VALUES ((SELECT @@IDENTITY), (select street from inserted), (select homeNo from inserted), (select flatNo from inserted), (select city from inserted), (select state from inserted), (select zip from inserted))
+	end
+	else begin
+		INSERT INTO juvenile (memberID, adult_memberid, birthDate) values ((SELECT @@IDENTITY), @adult_id, (select expirationDate from inserted))
+	end
+END
+
+go
+
 /*	
  *	VIEWS
  */
  create view view_members
  as
- select M.memberID, M.firstname, M.lastname, M.phone, M.email, A.city, A.street, A.homeNo, A.flatNo, A.zip, A.state, A.expirationDate, null as AdultID,  M.active
+ select M.memberID, M.firstname, M.lastname, M.phone, M.email, A.city, A.street, A.homeNo, A.flatNo, A.zip, A.state, A.expirationDate, NULL as AdultID,  M.active
  from member M
  join adult A on M.memberID = A.memberID
  union

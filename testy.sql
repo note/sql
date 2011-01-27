@@ -29,17 +29,22 @@ select * from loan
 select * from loanhist
 select * from copy
 
+SELECT @@IDENTITY from member
+select
 --widoki testing
 select * from view_members
+insert into view_members (firstname, lastname, phone, adultid) values('lou', 'reed', '12345678901')
 select * from view_films
+exec insertAdult 'patry333k', 'fadf', '21345678901', 'jakis@mail.pl', 'czarnowiejska', '12', '54', 'krakow', 'malopolska', '33233'
+exec insertJuvenile 'Asafa', 'fadf', '21345678901', 'jakis@mail.pl', 'czarnowiejska', '12', '54', 'krakow', 'malopolska', '33233'
+select top 5 * from member order by memberID desc
 
 select * from view_topFilms
 select * from view_topClients
 
 --setMemberActive
 exec setMemberActive 25, 0 -- ma dzieci o memberID 1284 1285
-
-select * from member where memberID=1284
+select * from member where memberID=1284 --sprawdzamy czy active == 0
 
 select * from category
 select * from label
