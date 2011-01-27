@@ -16,7 +16,7 @@
 \section{Struktura bazy}
 \subsection{Schemat}
 \begin{center}
-	%\includegraphics[width=1.00\textwidth]{bazyNew.png}
+	\includegraphics[width=1.00\textwidth]{bazyNew.png}
 	\captionof{figure}{Schemat bazy danych}
 	\label{fig:schemat}
 \end{center}
@@ -26,6 +26,7 @@
 Pola pogrubione są polami wymaganymi.
 % segment tabela
 \paragraph{member}
+przechowuje podstawowe informacje o kliencie
 \subparagraph{pola:}
 \textbf{memberID (PK), firstname, lastname, phone, active}, email
 \subparagraph{sprawdzanie poprawności danych:}
@@ -37,7 +38,7 @@ Pola pogrubione są polami wymaganymi.
 \newpage
 
 % segment tabela
-\paragraph{juvenile}
+\paragraph{juvenile} przechowuje szczegółowe informacje o niepełnoletnim kliencie
 \subparagraph{pola:}
 \textbf{memberID (PK, FK:\underline{member}), adult\_memberID (FK),} \\ \textbf{birthDate}
 \subparagraph{sprawdzanie poprawności danych:}
@@ -47,7 +48,7 @@ Pola pogrubione są polami wymaganymi.
 % ends tabela
 
 % segment tabela
-\paragraph{adult}
+\paragraph{adult} przechowuje szczegółowe informacje o dorosłym kliencie
 \subparagraph{pola:}
 \textbf{memberID (PK, FK:\underline{member}), street, homeNo, city, state, zip, expirationDate}, flatNo
 \subparagraph{sprawdzanie poprawności danych:}
@@ -62,7 +63,7 @@ Pola pogrubione są polami wymaganymi.
 % ends tabela
 
 % segment tabela
-\paragraph{reservation}
+\paragraph{reservation} przechowuje informacje o złożonych rezerwacjach
 \subparagraph{pola:}
 \textbf{memberID (PK, FK:\underline{member}), mediumID (PK, FK:\underline{item}), filmID (PK, FK:\underline{member}), logDate, acceptDate}
 \subparagraph{unikalne pola, zestawy pól:}
@@ -81,7 +82,7 @@ Pola pogrubione są polami wymaganymi.
 % ends tabela
 
 % segment tabela
-\paragraph{film}
+\paragraph{film} przechowuje informacje o filmach w zbiorach wypożyczalni
 \subparagraph{pola:}
 \textbf{filmID (PK), filmPrice, title, director}, description
 \subparagraph{unikalne pola, zestawy pól:}
@@ -91,7 +92,7 @@ Pola pogrubione są polami wymaganymi.
 % ends tabela
 
 % segment tabela
-\paragraph{label}
+\paragraph{label} przechowuje informacje o etykietach dla filmów (nowość, promocja, hit)
 \subparagraph{pola:}
 \textbf{labelID (PK), labelName, priceMultiply, loanPeriod}
 \subparagraph{unikalne pola, zestawy pól:}
@@ -105,7 +106,7 @@ Pola pogrubione są polami wymaganymi.
 % ends tabela
 
 % segment tabela
-\paragraph{film\_and\_label}
+\paragraph{film\_and\_label} tabela łącznikowa między filmami, a etykietami
 \subparagraph{pola:}
 \textbf{filmID (PK, FK:\underline{film}), labelID (PK, FK:\underline{label}), expirationDate}
 \subparagraph{unikalne pola, zestawy pól:}
@@ -135,7 +136,7 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 % ends tabela
 
 % segment tabela
-\paragraph{category}
+\paragraph{category} przechowuje informacje o kategoriach filmów
 \subparagraph{pola:}
 \textbf{categoryID (PK), categoryName}
 \subparagraph{unikalne pola, zestawy pól:}
@@ -145,7 +146,7 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 % ends tabela
 
 % segment tabela
-\paragraph{film\_and\_category}
+\paragraph{film\_and\_category} tabela łącznikowa między filmami, a kategoriami
 \subparagraph{pola:}
 \textbf{filmID (PK, FK:\underline{film}), categoryID (PK, FK:\underline{category})}
 \subparagraph{unikalne pola, zestawy pól:}
@@ -157,12 +158,12 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 \newpage
 
 % segment tabela
-\paragraph{medium}
+\paragraph{medium} przechowuje informacje o nośnikach filmów
 \subparagraph{pola:}
 \textbf{mediumID (PK), mediumName, priceMultiply}
 \subparagraph{unikalne pola, zestawy pól:}
 \begin{itemize}
-	\item mediumName, \textit{unikalna nazwa nośnika pamięci (dvd, blu-ray)}
+	\item mediumName, \textit{unikalna nazwa nośnika filmu (dvd, blu-ray)}
 \end{itemize}
 \subparagraph{wartości domyślne:}
 \begin{itemize}
@@ -171,7 +172,7 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 % ends tabela
 
 % segment tabela
-\paragraph{item}
+\paragraph{item} tabela łącznika między filmem, a nośnikiem
 \subparagraph{pola:}
 \textbf{filmID (PK, FK:\underline{film}), mediumID (PK, FK:\underline{medium})}
 \subparagraph{unikalne pola, zestawy pól:}
@@ -181,13 +182,13 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 % ends tabela
 
 % segment tabela
-\paragraph{copy}
+\paragraph{copy} przechowuje informacje o wszystkich kopiach filmów
 \subparagraph{pola:}
 \textbf{copyID (PK), filmID (FK:\underline{film}), mediumID (FK:\underline{medium}), onLoan}
 % ends tabela
 
 % segment tabela
-\paragraph{loan}
+\paragraph{loan} przechowuje informacje o wszystkich aktualnych wypożyczeniach
 \subparagraph{pola:}
 \textbf{copyID (PK, FK:\underline{copy}), memberID (FK:\underline{member})}, \\\textbf{outDate, dueDate}
 \subparagraph{unikalne pola, zestawy pól:}
@@ -196,7 +197,6 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 \end{itemize}
 \subparagraph{sprawdzanie poprawności danych:}
 \begin{itemize}
-	\item outDate, \textit{musi być równa dacie wprowadzenia rekordu}
 	\item dueDate, \textit{musi być większa od outDate}
 \end{itemize}
 \subparagraph{wartości domyślne:}
@@ -206,7 +206,7 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 % ends tabela
 
 % segment tabela
-\paragraph{loanhist}
+\paragraph{loanhist} archiwum wypożyczeń
 \subparagraph{pola:}
 \textbf{outDate (PK), copyID (PK, FK:\underline{copy}), memberID (FK:\underline{member}), dueDate, inDate}, fineAssessed, finePaid, fineWaived, remarks
 \subparagraph{unikalne pola, zestawy pól:}
@@ -215,7 +215,6 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 \end{itemize}
 \subparagraph{sprawdzanie poprawności danych:}
 \begin{itemize}
-	\item inDate, \textit{musi być równa dacie wprowadzenia rekordu}
 	\item finePaid, \textit{musi być mniejsza lub równa różnicy kwot fineAssessed i fineWaived}
 \end{itemize}
 \subparagraph{wartości domyślne:}
@@ -224,15 +223,45 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 \end{itemize}
 % ends tabela
 
+% #########################################################################################################
+%	PROCEDURY
+% #########################################################################################################
+
+\newpage
+
 \section{Procedury}
 \subsection{Procedury modyfikujące}
+% segment procedura
 \paragraph{setMemberActive}
+Ustawia wartość pola active dla użytkownika. Propagacja na dzieci poprzez trigger tr\_updateMember.
 \subparagraph{Argumenty:}
-@member_id - id użytkownika
-@active - 0 gdy chcemy ustawić na nieaktywnego, 1 w przeciwnym wypadku
+\begin{itemize}
+	\item @member\_id, \textit{id użytkownika}
+	\item @active (0, 1), \textit{0 gdy chcemy ustawić na nieaktywnego, 1 gdy na aktywnego}
+\end{itemize}
 \subparagraph{Wartość zwracana: brak}
-\subparagraph{Opis:}
-Ustawia wartość pola active dla użytkownika. Propagacja na dzieci poprzez trigger tr_updateMember.
+% ends procedura
+
+% segment procedura
+\paragraph{deleteMember}
+Usuwa użytkownika. Przy usuwaniu rodzica usuwa wszystkie jego dzieci.
+\subparagraph{Argumenty:}
+\begin{itemize}
+	\item @member\_id, \textit{id użytkownika}
+\end{itemize}
+\subparagraph{Wartość zwracana: brak}
+% ends procedura
+
+% segment procedura
+\paragraph{insertLoan}
+Dodaje rekord do tabeli wypożyczeń.
+\subparagraph{Argumenty:}
+\begin{itemize}
+	\item @member\_id, \textit{id użytkownika}
+\end{itemize}
+\subparagraph{Wartość zwracana: brak}
+% ends procedura
+
 \subsection{Procedury niemodyfikujące}
 
 \end{document}

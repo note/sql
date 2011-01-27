@@ -26,9 +26,9 @@ begin
 	select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
 	
 	if(@rowcount<6) and (@time_delay = 0) begin
-		select @rowcount=COUNT(*) from loanhist where memberID=@member_id
+		select @rowcount=COUNT(*) from loanhist where memberID=@member_id and (DATEADD(dd, 92, outDate)) > getdate();
 		
-		if(@rowcount>3) begin
+		if(@rowcount>=3) begin
 			set @discount=10
 		end
 			
@@ -49,7 +49,7 @@ create procedure setMemberActive @member_id int, @active int
 as
 begin
 	if(@active<>0 AND @active<>1) begin
-		PRINT 'Drugi argument funkcji setMemberActive musi byæ wartoœci 0 lub 1'
+		PRINT 'Drugi argument funkcji setMemberActive musi byc wartosci 0 lub 1'
 	end
 	else begin
 		UPDATE member SET active=@active WHERE memberID=@member_id
