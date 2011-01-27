@@ -16,10 +16,11 @@ CREATE TABLE member (
 	birthDate DATE NOT NULL,
 	phone CHAR(11) NOT NULL,
 	email VARCHAR(100) NULL,
-	active BIT NULL,
+	active BIT NULL default 1,
 	CONSTRAINT ck_phone CHECK(LEN(phone) = 11),
 	CHECK (birthDate < getdate()),
 	CHECK (year(birthDate) > 1900)
+	CONSTRAINT memberUQ UNIQUE (firstname, lastname, birthdate, active)
 )
 
 CREATE TABLE medium (
