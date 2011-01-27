@@ -32,14 +32,14 @@ CREATE TRIGGER tr_insertViewMembers
 on view_members
 INSTEAD OF INSERT
 AS BEGIN
-	INSERT INTO member (lastname, firstname, phone, email) values ((select lastname from inserted), (select firstname from inserted), (select phone from inserted), (select email from inserted))
+	INSERT INTO member (lastname, firstname, birthDate, phone, email) values ((select lastname from inserted), (select firstname from inserted), (select birthDate from inserted), (select phone from inserted), (select email from inserted))
 	declare @adult_id int
 	SET @adult_id = (SELECT adultid from inserted)
 	IF @adult_id is null begin
 		INSERT INTO adult (memberID, street, homeNo, flatNo, city, state, zip) VALUES ((SELECT @@IDENTITY), (select street from inserted), (select homeNo from inserted), (select flatNo from inserted), (select city from inserted), (select state from inserted), (select zip from inserted))
 	end
 	else begin
-		INSERT INTO juvenile (memberID, adult_memberid, birthDate) values ((SELECT @@IDENTITY), @adult_id, (select expirationDate from inserted))
+		INSERT INTO juvenile (memberID, adult_memberid) values ((SELECT @@IDENTITY), @adult_id)
 	end
 END
 

@@ -7,7 +7,7 @@
  from member M
  join adult A on M.memberID = A.memberID
  union
- select M.memberID, M.firstname, M.lastname, M.phone, M.email, A.city, A.street, A.homeNo, A.flatNo, A.zip, A.state, J.birthDate, A.memberID as AdultID, M.active
+ select M.memberID, M.firstname, M.lastname, M.phone, M.email, A.city, A.street, A.homeNo, A.flatNo, A.zip, A.state, A.birthDate, A.memberID as AdultID, M.active
  from member M
  join juvenile J on J.memberID = M.memberID
  join adult A on J.adult_memberID = A.memberID
