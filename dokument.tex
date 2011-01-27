@@ -318,13 +318,17 @@ Dodaje niepełnoletniego klienta do tabel \underline{member} oraz \underline{juv
 \subsection{Triggery}
 % segment trigger
 \paragraph{tr\_deleteLoan}
-Usuwany rekod z tabeli \underline{loan} trafia do tabeli \underline{loanhist}.
-\textbf{TODO: NALICZANIE KARY}
+Usuwany rekod z tabeli \underline{loan} trafia do tabeli \underline{loanhist}. Jeśli data oddania została przekroczona, automatycznie naliczana jest kara.
 % ends trigger
 
 % segment trigger
 \paragraph{tr\_updateMember}
 Zmienia stan użytkownika.
+% ends trigger
+
+% segment trigger
+\paragraph{tr\_insertViewMembers}
+Dodaje użytkowników korzystając z widoku \underline{view_members}.
 % ends trigger
 
 
@@ -354,9 +358,5 @@ Wyświetla listę 10 najczęściej wypożyczanych filmów w ostatnim miesiącu.
 \paragraph{view\_topClients}
 Wyświetla listę 10 najlepszych klientów z ostatniego miesiąca.
 % ends widok
-
-
-
-
 
 \end{document}

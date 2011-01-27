@@ -175,6 +175,7 @@ go
 		FOR XML PATH ('')) AS Etykiety
 	,(select count(*) from copy C where C.filmid =  F.filmID) as Kopie
 	,(select COUNT(*) from copy C where C.filmid = F.filmID and C.onLoan = 0) as Dostepnych
+	, F.description
 FROM film F
 
 go
