@@ -13,6 +13,7 @@ CREATE TABLE member (
 	memberID int NOT NULL PRIMARY KEY IDENTITY,
 	lastname VARCHAR(50) NOT NULL,
 	firstname VARCHAR(50) NOT NULL,
+	birthDate DATE NOT NULL,
 	phone CHAR(11) NOT NULL,
 	email VARCHAR(100) NULL,
 	active BIT NULL,
@@ -86,10 +87,8 @@ CREATE TABLE item (
 CREATE TABLE juvenile (
 	memberID int NOT NULL PRIMARY KEY,
 	adult_memberID int NOT NULL,
-	birthDate DATE NOT NULL,
 	FOREIGN KEY (memberID) references member(memberID) on delete cascade,
 	FOREIGN KEY (adult_memberID) references adult(memberID),
-	CONSTRAINT ck_birthDate CHECK (DATEADD(dd, 6575, birthDate) > getdate() and birthDate < GETDATE()) --defaultowo to getdate() + 18*365 dni + max 5 dni za lata przestepne
  )
 
 CREATE TABLE copy (
