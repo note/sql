@@ -17,7 +17,9 @@ CREATE TABLE member (
 	phone CHAR(11) NOT NULL,
 	email VARCHAR(100) NULL,
 	active BIT NULL,
-	CONSTRAINT ck_phone CHECK(LEN(phone) = 11)
+	CONSTRAINT ck_phone CHECK(LEN(phone) = 11),
+	CHECK (birthDate < getdate()),
+	CHECK (year(birthDate) > 1900)
 )
 
 CREATE TABLE medium (
@@ -108,7 +110,6 @@ CREATE TABLE reservation (
 	FOREIGN KEY (filmID) references film(filmID),
 	FOREIGN KEY (mediumID) references medium(mediumID),
 	PRIMARY KEY (memberID, mediumID, filmID),
-	CONSTRAINT ck_logDate CHECK(logDate=GETDATE()),
 	CHECK (acceptDate >= logDate),
 	CONSTRAINT reservation_unique UNIQUE (memberID, mediumID, filmID)
 )
