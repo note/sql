@@ -88,6 +88,10 @@ go
 
 create procedure insertJuvenile @firstname varchar(50), @lastname varchar(50), @phone char(11), @email varchar(100), @birthdate date, @adult_id int
 as begin
-	insert into view_members (firstname, lastname, phone, email, birthDate, adult_memberID) values(@firstname, @lastname, @phone, @email, @birthdate, @adult_id)
+	if (@birthDate > getdate() + 6575) begin	-- sprawdzam, czy nie ma wiecej niz 18 lat
+		insert into view_members (firstname, lastname, phone, email, birthDate, adult_memberID) values(@firstname, @lastname, @phone, @email, @birthdate, @adult_id)
+	end else begin
+		PRINT 'Probujesz dodac do juvenila osobe dorosla'
+	end
 end
 go
