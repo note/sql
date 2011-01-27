@@ -224,15 +224,23 @@ I właśnie informacje o tym przechowujemy w tej tabeli.
 % ends tabela
 
 % #########################################################################################################
-%	PROCEDURY
+%	PROCEDURY, TRIGGERY, WIDOKI
 % #########################################################################################################
 
 \newpage
 \section{Procedury, Triggery, Widoki}
 
 
-
 \subsection{Procedury}
+% segment procedura
+\paragraph{deleteMember}
+Usuwa użytkownika. Przy usuwaniu rodzica usuwa wszystkie jego dzieci.
+\subparagraph{Argumenty:}
+\begin{itemize}
+	\item @member\_id, \textit{id użytkownika}
+\end{itemize}
+% ends procedura
+
 % segment procedura
 \paragraph{setMemberActive}
 Ustawia wartość pola active dla użytkownika. Propagacja na dzieci poprzez trigger tr\_updateMember.
@@ -241,17 +249,6 @@ Ustawia wartość pola active dla użytkownika. Propagacja na dzieci poprzez tri
 	\item @member\_id, \textit{id użytkownika}
 	\item @active (0, 1), \textit{0 gdy chcemy ustawić na nieaktywnego, 1 gdy na aktywnego}
 \end{itemize}
-\subparagraph{Wartość zwracana: brak}
-% ends procedura
-
-% segment procedura
-\paragraph{deleteMember}
-Usuwa użytkownika. Przy usuwaniu rodzica usuwa wszystkie jego dzieci.
-\subparagraph{Argumenty:}
-\begin{itemize}
-	\item @member\_id, \textit{id użytkownika}
-\end{itemize}
-\subparagraph{Wartość zwracana: brak}
 % ends procedura
 
 % segment procedura
@@ -278,7 +275,38 @@ Dodaje rekord do tabeli rezerwacji. Zablokuje możliwość dodania rekordu gdy k
 	\item @film\_id, \textit{id filmu}
 	\item @medium\_id, \textit{id nośnika filmu}
 \end{itemize}
-\subparagraph{Wartość zwracana: brak}
+% ends procedura
+
+% segment procedura
+\paragraph{insertAdult}
+Dodaje dorosłego klienta do tabel \underline{member} oraz \underline{adult}.
+\subparagraph{Argumenty:}
+\begin{itemize}
+	\item @firstname, \textit{imię}
+	\item @lastname, \textit{nazwisko}
+	\item @phone, \textit{numer telefonu}
+	\item @email, \textit{adres e-mail}
+	\item @street, \textit{nazwa ulicy}
+	\item @homeNo, \textit{numer domu}
+	\item @flatNo, \textit{numer mieszkania}
+	\item @city, \textit{miejscowość zamieszkania}
+	\item @state, \textit{województwo/land/stan/region}
+	\item @zip, \textit{kod kreskowy}
+\end{itemize}
+% ends procedura
+
+% segment procedura
+\paragraph{insertJuvenile}
+Dodaje niepełnoletniego klienta do tabel \underline{member} oraz \underline{juvenile}.
+\subparagraph{Argumenty:}
+\begin{itemize}
+	\item @firstname, \textit{imię}
+	\item @lastname, \textit{nazwisko}
+	\item @phone, \textit{numer telefonu}
+	\item @email, \textit{adres e-mail}
+	\item @adult\_id, \textit{identyfikator rodzica}
+	\item @birthdate, \textit{data urodzenia}
+\end{itemize}
 % ends procedura
 
 

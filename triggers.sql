@@ -12,6 +12,19 @@ end
 
 go
 
+create procedure setMemberActive @member_id int, @active int
+as
+begin
+	if(@active<>0 AND @active<>1) begin
+		PRINT 'Drugi argument funkcji setMemberActive musi byc wartosci 0 lub 1'
+	end
+	else begin
+		UPDATE member SET active=@active WHERE memberID=@member_id
+	end
+end
+
+go
+
 --Returns discount in percentage. If loan can't be insterted then returns -1.
 --Also will not allow to make a loan for one who is keeping films too long
 create procedure insertLoan @copy_id int, @member_id int, @discount int OUTPUT
@@ -45,19 +58,6 @@ begin
 			PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'przetrzymuje filmy'
 		end
 	end else PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'jest nieaktywny'
-end
-
-go
-
-create procedure setMemberActive @member_id int, @active int
-as
-begin
-	if(@active<>0 AND @active<>1) begin
-		PRINT 'Drugi argument funkcji setMemberActive musi byc wartosci 0 lub 1'
-	end
-	else begin
-		UPDATE member SET active=@active WHERE memberID=@member_id
-	end
 end
 
 go
@@ -100,7 +100,13 @@ CREATE TRIGGER tr_deleteLoan
 ON loan
 AFTER DELETE
 AS BEGIN
-	INSERT INTO loanhist (outDate, copyID, memberID, dueDate) VALUES ((SELECT outDate from deleted), (SELECT copyID from deleted), (SELECT memberID from deleted), (SELECT dueDate from deleted)) --todo naliczanie kary
+	declare @to_pay decimal
+	if(getdate() > (select dueDate from deleted)) begin
+		declare @days int
+		select @days = datediff(day, getdate(), dueDate) from deleted
+		@to_pay = 0.5 * @days
+	end
+	INSERT INTO loanhist (outDate, copyID, memberID, dueDate, fineAssessed) VALUES ((SELECT outDate from deleted), (SELECT copyID from deleted), (SELECT memberID from deleted), (SELECT dueDate from deleted), @to_pay) --todo naliczanie kary
 END
 
 go
