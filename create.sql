@@ -123,12 +123,9 @@ CREATE TABLE loan (
 	dueDate DATE NOT NULL,
 	FOREIGN KEY (copyID) references copy(copyID),
 	FOREIGN KEY (memberID) references member(memberID),
-	CONSTRAINT ck_outDate CHECK(outDate=GETDATE()),
 	CHECK (dueDate>outDate),
 	CONSTRAINT loan_unique UNIQUE (memberID, copyID)
 )
-
-ALTER TABLE loan DROP constraint  ck_outDate -- nie wiem czemu,ale z tym checkiem nie mozna dodawac loanow, todo
 
 CREATE TABLE loanhist (
 	outDate DATE NOT NULL,
@@ -143,12 +140,9 @@ CREATE TABLE loanhist (
 	FOREIGN KEY (copyID) references copy(copyID),
 	FOREIGN KEY (memberID) references member(memberID),
 	PRIMARY KEY (outDate, copyID),
-	CONSTRAINT ck_inDate CHECK(inDate=GETDATE()),
 	CHECK (finePaid <= fineAssessed-fineWaived),
 	CONSTRAINT loanhist_unique UNIQUE (outDate, copyID)
 )
-
-ALTER TABLE loanhist DROP constraint ck_inDate -- nie wiem czemu,ale z tym checkiem nie mozna dodawac loanhistow, todo
 
 CREATE TABLE reservation_and_film_and_label (
 	memberID int NOT NULL,
