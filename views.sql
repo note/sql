@@ -77,11 +77,12 @@ go
 
 CREATE VIEW view_reservations
 AS
-	select m.memberID, m.firstname, m.lastname, m.phone, f.title, f.director, medium.mediumName, r.logDate, r.acceptDate, f.filmPrice*medium.priceMultiply*MUL(label.priceMultiply) Cena
+	select m.memberID, m.firstname, m.lastname, m.phone, f.title, f.director, medium.mediumName, r.logDate, r.acceptDate, f.filmPrice*medium.priceMultiply*sum(l.priceMultiply)/COUNT(*) Cena
 	from reservation r
 	join member m on m.memberID = r.memberID
 	join film f on f.filmID = r.filmID
 	join medium on medium.mediumID = r.mediumID
-	join reservation_and_film_and_label label on label.filmID = r.filmID
-	gropu by m.memberID, m.firstname, m.lastname, m.phone, f.title, f.director, medium.mediumName, r.logDate, r.acceptDate, f.filmPrice, medium.priceMultiply
+	join reservation_and_film_and_label lfl on lfl.filmID = r.filmID
+	join label l on l.labelID=lfl.labelID
+	group by m.memberID, m.firstname, m.lastname, m.phone, f.title, f.director, medium.mediumName, r.logDate, r.acceptDate, f.filmPrice, medium.priceMultiply
 go

@@ -95,7 +95,7 @@ begin
 			-- Check @@FETCH_STATUS to see if there are any more rows to fetch.
 			WHILE @@FETCH_STATUS =0
 			BEGIN
-			INSERT INTO reservation_and_film_and_label (memberID, labelID, filmID, mediumID) VALUES (@memberID, @filmID, @mediumID, @label)
+			INSERT INTO reservation_and_film_and_label (memberID, labelID, filmID, mediumID) VALUES (@member_id, @film_id, @medium_id, @label)
 			-- This is executed as long as the previous fetch succeeds.
 			FETCH NEXT FROM labels_cursor into @label
 			END
@@ -164,6 +164,6 @@ go
 
 create procedure insertMedium @medium_name varchar(20), @multiply DECIMAL(18,2)
 as
-	INSERT INTO medium (mediumName, priceMultiply) VALUES (@medium_name, @multiply)
 begin
+	INSERT INTO medium (mediumName, priceMultiply) VALUES (@medium_name, @multiply)
 end

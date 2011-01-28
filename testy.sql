@@ -1,5 +1,4 @@
 use OurRental
-
 select * from film
 select * from category
 select * from film_and_category
@@ -85,3 +84,5 @@ EXEC setMemberActive 17, 1
 
 declare @d int
 EXEC insertLoan 4, 17, @d
+
+
