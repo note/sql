@@ -130,10 +130,15 @@ end
 
 go
 
-create procedure insertMovie @title varchar(80), @director varchar(80), @description text, @filmprice DECIMAL(18,2)=10.0
+create procedure insertMovie @title varchar(80), @director varchar(80), @description text, @filmprice DECIMAL(18,2)=10.0, @category_id int = null
 as
 begin
 	INSERT INTO film (title, director, description, filmPrice) VALUES (@title, @director, @description, @filmprice)
+	if @category_id is not null begin
+		declare @film_id int
+		set @film_id=(SELECT @@IDENTITY)
+		insert into film_and_category(filmID, categoryID) VALUES (@film_id, @category_id)
+	end
 end
 
 go
@@ -170,12 +175,18 @@ go
 create procedure acceptReservation @member_id int, @medium_id int, @film_id int
 as
 begin
-	update reservation r1 set copyID = (
+	update reservation set copyID = (
 		select top 1 c.copyID
 		from reservation r2
 		join copy c on r2.filmID = c.filmID and r2.mediumID = c.mediumID
 		where c.onLoan = 1
 		order by c.copyID
-	) where r1.memberID = @member_id and r1.mediumID = @medium_id and r1.filmID = @film_id
+	) where memberID = @member_id and mediumID = @medium_id and filmID = @film_id
 end
 go
+
+create procedure insertFilmAndCategory @film_id int, @category_id int
+as
+begin
+	INSERT INTO film_and_category (filmID, categoryID) VALUES (@film_id, @category_id)
+end

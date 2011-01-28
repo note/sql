@@ -113,7 +113,7 @@ CREATE TABLE reservation (
 	FOREIGN KEY (mediumID) references medium(mediumID),
 	PRIMARY KEY (memberID, mediumID, filmID),
 	CHECK (acceptDate >= logDate),
-	CONSTRAINT reservation_unique UNIQUE (memberID, mediumID, filmID)
+	CONSTRAINT reservation_unique UNIQUE (memberID, mediumID, filmID),
 	constraint reservation_unique1 unique (copyID)
 )
 
