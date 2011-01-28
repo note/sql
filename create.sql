@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 create database OurRental
 --drop database OurRental
 
@@ -20,7 +19,7 @@ CREATE TABLE member (
 	active BIT NULL default 1,
 	CONSTRAINT ck_phone CHECK(LEN(phone) = 11),
 	CHECK (birthDate < getdate()),
-	CHECK (year(birthDate) > 1900)
+	CHECK (year(birthDate) > 1900),
 	CONSTRAINT memberUQ UNIQUE (firstname, lastname, birthdate, active)
 )
 

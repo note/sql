@@ -37,6 +37,7 @@ insert into view_members (firstname, lastname, phone, adultid) values('lou', 're
 select * from view_films
 exec insertAdult 'patry333k', 'fadf', '21345678901', 'jakis@mail.pl', 'czarnowiejska', '12', '54', 'krakow', 'malopolska', '33233'
 exec insertJuvenile 'Asafa', 'fadf', '21345678901', 'jakis@mail.pl', '11/10/99', 814
+exec insertJuvenile 'Asafa', 'fadf', '21345678901', 'jakis@mail.pl', '11/10/99', 814
 select top 5 * from member order by memberID desc
 select top 5 * from juvenile order by memberID desc
 select * from view_topFilms
@@ -50,3 +51,8 @@ select * from category
 select * from label
 select * from loan
 select * from copy
+
+EXEC insertadult 'Paulina', 'Wiecheæ', '48608245517', 'sgfsdf', '09/12/74', 'Mi³kowskiego', '134', '67', 'Warszawa', 'Mazowieckie', '04741'
+
+declare @d int
+exec insertLoan 3, 4, @d
