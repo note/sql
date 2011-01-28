@@ -143,7 +143,6 @@ as
 begin
 	INSERT INTO copy(mediumID, filmID, onLoan) VALUES (@medium_id, @film_id, @on_loan)
 end
-
 go
 
 create procedure insertCategory @category varchar(30)
@@ -151,7 +150,6 @@ as
 begin
 	insert into category(categoryName) VALUES (@category)
 end
-
 go
 
 create procedure insertItem @film_id int, @medium_id int
@@ -164,6 +162,20 @@ go
 
 create procedure insertMedium @medium_name varchar(20), @multiply DECIMAL(18,2)
 as
-	INSERT INTO medium (mediumName, priceMultiply) VALUES (@medium_name, @multiply)
 begin
+	INSERT INTO medium (mediumName, priceMultiply) VALUES (@medium_name, @multiply)
 end
+go
+
+create procedure acceptReservation @member_id int, @medium_id int, @film_id int
+as
+begin
+	update reservation r1 set copyID = (
+		select top 1 c.copyID
+		from reservation r2
+		join copy c on r2.filmID = c.filmID and r2.mediumID = c.mediumID
+		where c.onLoan = 1
+		order by c.copyID
+	) where r1.memberID = @member_id and r1.mediumID = @medium_id and r1.filmID = @film_id
+end
+go

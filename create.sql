@@ -106,12 +106,15 @@ CREATE TABLE reservation (
 	filmID int NOT NULL,
 	logDate DATE NOT NULL default getdate(),
 	acceptDate DATE NULL,
+	copyID int null,
+	FOREIGN KEY (copyID) references copy(copyID),
 	FOREIGN KEY (memberID) references member(memberID),
 	FOREIGN KEY (filmID) references film(filmID),
 	FOREIGN KEY (mediumID) references medium(mediumID),
 	PRIMARY KEY (memberID, mediumID, filmID),
 	CHECK (acceptDate >= logDate),
 	CONSTRAINT reservation_unique UNIQUE (memberID, mediumID, filmID)
+	constraint reservation_unique1 unique (copyID)
 )
 
 CREATE TABLE loan (
