@@ -30,34 +30,39 @@ go
 create procedure insertLoan @copy_id int, @member_id int, @discount int OUTPUT
 as
 begin
-	declare @active int
-	select @active=active from member where memberID = @member_id
-	if(@active = 1) begin
-		declare @rowcount int
-		set @discount=0
-		select @rowcount=COUNT(*) from loan where memberID=@member_id
+	declare @on_loan bit
+	select @on_loan = onLoan from copy where copyID = @copy_id
+	if (@on_loan = 1) begin
+		declare @active int
+		select @active=active from member where memberID = @member_id
+		if(@active = 1) begin
+			declare @rowcount int
+			set @discount=0
+			select @rowcount=COUNT(*) from loan where memberID=@member_id
 
-		-- warunek na przetrzymywanie filmow:
-		declare @time_delay int
-		select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
+			-- warunek na przetrzymywanie filmow:
+			declare @time_delay int
+			select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
 
-		if(@rowcount<6) and (@time_delay = 0) begin
-			select @rowcount=COUNT(*) from loanhist where memberID=@member_id and (DATEADD(dd, 92, outDate)) > getdate();
-		
-			if(@rowcount>=3) begin
-				set @discount=10
-			end
+			if(@rowcount<6) and (@time_delay = 0) begin
+				select @rowcount=COUNT(*) from loanhist where memberID=@member_id and (DATEADD(dd, 92, outDate)) > getdate();
 			
-			insert into loan (copyID, memberID, outDate, dueDate) Values (@copy_id, @member_id, GETDATE(), GETDATE()+4)
-		end
-		else if(@rowcount >= 6) begin
-			set @discount=-1
-			PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' ma juz wypozyczonych 6 filmow'
-		end
-		else begin
-			PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'przetrzymuje filmy'
-		end
-	end else PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'jest nieaktywny'
+				if(@rowcount>=3) begin
+					set @discount=10
+				end
+				
+				insert into loan (copyID, memberID, outDate, dueDate) Values (@copy_id, @member_id, GETDATE(), GETDATE()+4)
+				update copy set onLoan = 0 where copyID = @copy_id
+			end
+			else if(@rowcount >= 6) begin
+				set @discount=-1
+				PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' ma juz wypozyczonych 6 filmow'
+			end
+			else begin
+				PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'przetrzymuje filmy'
+			end
+		end else PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'jest nieaktywny'
+	end else PRINT 'Kopia jest juz wypozyczona'
 end
 
 go
@@ -70,11 +75,12 @@ begin
 	select @active=active from member where memberID = @member_id
 	if(@active = 1) begin
 		declare @time_delay int
-		select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > outDate
+		select @time_delay=count(*) from loan where memberID=@member_id and GETDATE() > dueDate
 		if (@time_delay > 0) begin
 			PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + ' przetrzymuje filmy'
 		end
 		else begin			
+			--tu trzeba napisac szukanie labelek
 			insert into reservation (memberID, mediumID, filmID, logDate) Values (@member_id, @medium_id, @film_id, GETDATE())
 			
 			Declare @label int

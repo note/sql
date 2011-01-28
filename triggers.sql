@@ -12,7 +12,8 @@ AS BEGIN
 		select @days = datediff(day, getdate(), dueDate) from deleted
 		set @to_pay = 0.5 * @days
 	end
-	INSERT INTO loanhist (outDate, copyID, memberID, dueDate, fineAssessed) VALUES ((SELECT outDate from deleted), (SELECT copyID from deleted), (SELECT memberID from deleted), (SELECT dueDate from deleted), @to_pay) --todo naliczanie kary
+	INSERT INTO loanhist (outDate, copyID, memberID, dueDate, fineAssessed) VALUES ((SELECT outDate from deleted), (SELECT copyID from deleted), (SELECT memberID from deleted), (SELECT dueDate from deleted), @to_pay)
+	update copy set onLoan = 1 where copyID = (select copyID from deleted)
 END
 
 go

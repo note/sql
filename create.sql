@@ -5,8 +5,7 @@ use OurRental
 create TABLE label (
 	labelID int NOT NULL PRIMARY KEY IDENTITY,
 	labelName VARCHAR(20) NOT NULL,
-	priceMultiply DECIMAL(2) NOT NULL DEFAULT 1,
-	loanPeriod int NULL
+	priceMultiply DECIMAL(18,2) NOT NULL DEFAULT 1,
 	CONSTRAINT label_unique UNIQUE (labelName)
 )
 CREATE TABLE member (
@@ -26,13 +25,13 @@ CREATE TABLE member (
 CREATE TABLE medium (
 	mediumID int NOT NULL PRIMARY KEY IDENTITY,
 	mediumName VARCHAR(20) NOT NULL,
-	priceMultiply DECIMAL(2) NOT NULL DEFAULT 1,
+	priceMultiply DECIMAL(18,2) NOT NULL DEFAULT 1,
 	CONSTRAINT medium_index UNIQUE (mediumName)
 )
 
 CREATE TABLE film (
 	filmID int NOT NULL PRIMARY KEY IDENTITY,
-	filmPrice DECIMAL(2) NOT NULL,
+	filmPrice DECIMAL(18,2) NOT NULL,
 	title VARCHAR(80) NOT NULL,
 	director VARCHAR(80) NOT NULL,
 	description TEXT NULL
@@ -132,9 +131,9 @@ CREATE TABLE loanhist (
 	memberID int NOT NULL,
 	dueDate DATE NOT NULL,
 	inDate DATE NOT NULL default getdate(),
-	fineAssessed DECIMAL(2) NULL,
-	finePaid DECIMAL(2) NULL,
-	fineWaived DECIMAL(2) NULL,
+	fineAssessed DECIMAL(18,2) NULL,
+	finePaid DECIMAL(18,2) NULL,
+	fineWaived DECIMAL(18,2) NULL,
 	remarks TEXT NULL,
 	FOREIGN KEY (copyID) references copy(copyID),
 	FOREIGN KEY (memberID) references member(memberID),

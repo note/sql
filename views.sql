@@ -73,3 +73,13 @@ AS
 	GROUP BY m.memberID, m.firstname, m.lastname) c
 	GROUP BY c.memberID, c.firstname, c.lastname
 	ORDER BY SUM(wypozyczen) DESC
+go
+
+CREATE VIEW view_reservations
+AS
+	select m.memberID, m.firstname, m.lastname, m.phone, f.title, f.director, medium.mediumName, r.logDate, r.acceptDate, f.filmPrice*medium.priceMultiply Cena
+	from reservation r
+	join member m on m.memberID = r.memberID
+	join film f on f.filmID = r.filmID
+	join medium on medium.mediumID = r.mediumID
+go
