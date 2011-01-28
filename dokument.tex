@@ -16,7 +16,7 @@
 \section{Struktura bazy}
 \subsection{Schemat}
 \begin{center}
-	\includegraphics[width=1.00\textwidth]{bazyNew.png}
+	\includegraphics[width=1.00\textwidth]{bazy1.png}
 	\captionof{figure}{Schemat bazy danych}
 	\label{fig:schemat}
 \end{center}
@@ -28,37 +28,31 @@ Pola pogrubione są polami wymaganymi.
 \paragraph{member}
 przechowuje podstawowe informacje o kliencie
 \subparagraph{pola:}
-\textbf{memberID (PK), firstname, lastname, phone, active}, email
+\textbf{memberID (PK), firstname, lastname, birthDate, phone, active}, email
+\subparagraph{unikalne pola, zestawy pól:}
+\begin{itemize}
+	\item (memberID, firstname, lastname, active), \textit{unikalna czwórka: zablokuje po raz drugi dodanie tej osoby, ale umożliwi to, gdy jej poprzednio konto zostało zdezaktywowane}
+\end{itemize}
 \subparagraph{sprawdzanie poprawności danych:}
 \begin{itemize}
 	\item phone, \textit{długość pola musi być równa 11}
+	\item birthDate, \textit{musi być mniejsze od aktualnej daty oraz rok większy 1990}
 \end{itemize}
 % ends tabela
-
-\newpage
 
 % segment tabela
 \paragraph{juvenile} przechowuje szczegółowe informacje o niepełnoletnim kliencie
 \subparagraph{pola:}
-\textbf{memberID (PK, FK:\underline{member}), adult\_memberID (FK),} \\ \textbf{birthDate}
-\subparagraph{sprawdzanie poprawności danych:}
-\begin{itemize}
-	\item birthDate, \textit{musi być mniejsza od daty wprowadzania i większa od tej samej daty pomniejszonej o 18 lat }
-\end{itemize}
+\textbf{memberID (PK, FK:\underline{member}), adult\_memberID (FK)}
 % ends tabela
 
 % segment tabela
 \paragraph{adult} przechowuje szczegółowe informacje o dorosłym kliencie
 \subparagraph{pola:}
-\textbf{memberID (PK, FK:\underline{member}), street, homeNo, city, state, zip, expirationDate}, flatNo
+\textbf{memberID (PK, FK:\underline{member}), street, homeNo, city, state, zip}, flatNo
 \subparagraph{sprawdzanie poprawności danych:}
 \begin{itemize}
-	\item expirationDate, \textit{data wygaśnięcia musi być większa od aktualnej daty}
 	\item zip, \textit{długość pola musi być równa 5}
-\end{itemize}
-\subparagraph{wartości domyślne:}
-\begin{itemize}
-	\item expirationDate, \textit{aktualna data + 5 lat}
 \end{itemize}
 % ends tabela
 
@@ -72,7 +66,6 @@ przechowuje podstawowe informacje o kliencie
 \end{itemize}
 \subparagraph{sprawdzanie poprawności danych:}
 \begin{itemize}
-	\item logDate, \textit{nie może być inna niż aktualna data}
 	\item acceptDate, \textit{musi być większa niż logDate}
 \end{itemize}
 \subparagraph{wartości domyślne:}
@@ -80,6 +73,8 @@ przechowuje podstawowe informacje o kliencie
 	\item logDate, \textit{aktualna data}
 \end{itemize}
 % ends tabela
+
+\newpage
 
 % segment tabela
 \paragraph{film} przechowuje informacje o filmach w zbiorach wypożyczalni
@@ -94,7 +89,7 @@ przechowuje podstawowe informacje o kliencie
 % segment tabela
 \paragraph{label} przechowuje informacje o etykietach dla filmów (nowość, promocja, hit)
 \subparagraph{pola:}
-\textbf{labelID (PK), labelName, priceMultiply, loanPeriod}
+\textbf{labelID (PK), labelName, priceMultiply}
 \subparagraph{unikalne pola, zestawy pól:}
 \begin{itemize}
 	\item labelName, \textit{unikalna nazwa etykiety (nowość, promocja, hit)}
@@ -254,7 +249,8 @@ Ustawia wartość pola active dla użytkownika. Propagacja na dzieci poprzez tri
 % segment procedura
 \paragraph{insertLoan}
 Dodaje rekord do tabeli wypożyczeń. Zwraca zniżkę w procentach dla klientów, którzy w przeciągu ostatnich 3 miesięcy pożyczyli co najmniej 3 filmy.
-Zablokuje możliwość dodania rekordu gdy klient ma już wypożyczone 6 filmów lub gdy przetrzymuje chociaż jeden film lub gdy jest nieaktywny.
+Zablokuje możliwość dodania rekordu gdy klient ma już wypożyczone 6 filmów lub gdy przetrzymuje chociaż jeden film lub gdy jest nieaktywny lub gdy kopia filmu jest niedostępna.
+Zmienia stan kopii na nieaktywny.
 \subparagraph{Argumenty:}
 \begin{itemize}
 	\item @member\_id, \textit{id użytkownika}
@@ -265,7 +261,7 @@ Zablokuje możliwość dodania rekordu gdy klient ma już wypożyczone 6 filmów
 	\item @discount, \textit{rabat dla klienta}
 \end{itemize}
 % ends procedura
-
+\newpage
 % segment procedura
 \paragraph{insertReservation}
 Dodaje rekord do tabeli rezerwacji. Zablokuje możliwość dodania rekordu gdy klient ma już wypożyczone 6 filmów lub gdy przetrzymuje chociaż jeden film lub gdy jest nieaktywny.
@@ -279,7 +275,7 @@ Dodaje rekord do tabeli rezerwacji. Zablokuje możliwość dodania rekordu gdy k
 
 % segment procedura
 \paragraph{insertAdult}
-Dodaje dorosłego klienta do tabel \underline{member} oraz \underline{adult}.
+Dodaje dorosłego klienta do tabel \underline{member} oraz \underline{adult} z wykorzystaniem widoku \underline{view\_members}.
 \subparagraph{Argumenty:}
 \begin{itemize}
 	\item @firstname, \textit{imię}
@@ -294,10 +290,10 @@ Dodaje dorosłego klienta do tabel \underline{member} oraz \underline{adult}.
 	\item @zip, \textit{kod kreskowy}
 \end{itemize}
 % ends procedura
-
+\newpage
 % segment procedura
 \paragraph{insertJuvenile}
-Dodaje niepełnoletniego klienta do tabel \underline{member} oraz \underline{juvenile}.
+Dodaje niepełnoletniego klienta do tabel \underline{member} oraz \underline{juvenile} z wykorzystaniem widoku \underline{view\_members}.
 \subparagraph{Argumenty:}
 \begin{itemize}
 	\item @firstname, \textit{imię}
@@ -307,6 +303,11 @@ Dodaje niepełnoletniego klienta do tabel \underline{member} oraz \underline{juv
 	\item @adult\_id, \textit{identyfikator rodzica}
 	\item @birthdate, \textit{data urodzenia}
 \end{itemize}
+% ends procedura
+
+% segment procedura
+\paragraph{refreshReservation}
+Procedura wykonywana codziennie przez serwer usuwająca rezerwacje zalegające dłużej niż 14 dni.
 % ends procedura
 
 
@@ -319,6 +320,7 @@ Dodaje niepełnoletniego klienta do tabel \underline{member} oraz \underline{juv
 % segment trigger
 \paragraph{tr\_deleteLoan}
 Usuwany rekod z tabeli \underline{loan} trafia do tabeli \underline{loanhist}. Jeśli data oddania została przekroczona, automatycznie naliczana jest kara.
+Zmienia stan kopii na aktywny.
 % ends trigger
 
 % segment trigger
@@ -328,7 +330,7 @@ Zmienia stan użytkownika.
 
 % segment trigger
 \paragraph{tr\_insertViewMembers}
-Dodaje użytkowników korzystając z widoku \underline{view_members}.
+Dodaje użytkowników korzystając z widoku \underline{view\_members}. Blokuje dodawanie użytkowników o nieprawidłowych datach urodzenia.
 % ends trigger
 
 
@@ -347,6 +349,11 @@ Wyświetla wszystkie informacje o wszystkich klientach w jednej tabeli.
 % segment widok
 \paragraph{view\_films}
 Wyświetla wszystkie informacje o wszystkich filmach w jednej tabeli.
+% ends widok
+
+% segment widok
+\paragraph{view\_reservations}
+Wyświetla wszystkie informacje o wszystkich rezerwacjach w jednej tabeli.
 % ends widok
 
 % segment widok
