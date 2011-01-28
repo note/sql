@@ -18,6 +18,7 @@ END
 
 go
 
+--propaguje zmiany na dzieci
 CREATE TRIGGER tr_updateMember
 ON member
 AFTER UPDATE

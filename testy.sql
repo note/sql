@@ -59,6 +59,29 @@ exec insertLoan 3, 4, @d
 
 
 select * from film_and_label where filmID=3
-
-EXEC insertReservation 13, 3, 2
+EXEC insertReservation 11, 3, 1 -- filmid=3 ma 2 labele
+select * from reservation_and_film_and_label --exec powinien dodac 2 labele - sprawdzamy
 select * from medium
+
+exec insertmovie 'Grek Zorba', 'oj nie wiem', 'co tu wiele mowic'
+
+exec insertCopy 2, 11
+
+exec insertCategory 'kulinarne'
+
+--------testy ostateczne:
+--dodaj usera:
+EXEC insertadult 'Roberto', 'Baggio', '48608245517', 'sgfsdf', '09/12/74', 'Mi³kowskiego', '134', '67', 'Warszawa', 'Mazowieckie', '04741'
+select memberid from member where lastname='Baggio'
+--zablokuj usera:
+EXEC setMemberActive 17, 0
+
+--sprobuj wypozyczyc:
+declare @d int
+EXEC insertLoan 4, 17, @d
+
+--odbloku usera:
+EXEC setMemberActive 17, 1
+
+declare @d int
+EXEC insertLoan 4, 17, @d

@@ -129,3 +129,41 @@ begin
 end
 
 go
+
+create procedure insertMovie @title varchar(80), @director varchar(80), @description text, @filmprice DECIMAL(18,2)=10.0
+as
+begin
+	INSERT INTO film (title, director, description, filmPrice) VALUES (@title, @director, @description, @filmprice)
+end
+
+go
+
+create procedure insertCopy @medium_id int, @film_id int, @on_loan bit=1
+as
+begin
+	INSERT INTO copy(mediumID, filmID, onLoan) VALUES (@medium_id, @film_id, @on_loan)
+end
+
+go
+
+create procedure insertCategory @category varchar(30)
+as
+begin
+	insert into category(categoryName) VALUES (@category)
+end
+
+go
+
+create procedure insertItem @film_id int, @medium_id int
+as
+begin
+	INSERT INTO item (filmID, mediumID) VALUES (@film_id, @medium_id)
+end
+
+go
+
+create procedure insertMedium @medium_name varchar(20), @multiply DECIMAL(18,2)
+as
+	INSERT INTO medium (mediumName, priceMultiply) VALUES (@medium_name, @multiply)
+begin
+end
