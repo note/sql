@@ -56,3 +56,9 @@ EXEC insertadult 'Paulina', 'Wiecheæ', '48608245517', 'sgfsdf', '09/12/74', 'Mi³
 
 declare @d int
 exec insertLoan 3, 4, @d
+
+
+select * from film_and_label where filmID=3
+
+EXEC insertReservation 13, 3, 2
+select * from medium

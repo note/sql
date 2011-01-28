@@ -76,6 +76,26 @@ begin
 		end
 		else begin			
 			insert into reservation (memberID, mediumID, filmID, logDate) Values (@member_id, @medium_id, @film_id, GETDATE())
+			
+			Declare @label int
+
+			DECLARE labels_cursor CURSOR FOR
+			select labelID from film_and_label where filmID=@film_id
+
+			OPEN labels_cursor
+
+			-- Perform the first fetch.
+			FETCH NEXT FROM labels_cursor into @label
+			-- Check @@FETCH_STATUS to see if there are any more rows to fetch.
+			WHILE @@FETCH_STATUS =0
+			BEGIN
+			INSERT INTO reservation_and_film_and_label (memberID, labelID, filmID, mediumID) VALUES (@memberID, @filmID, @mediumID, @label)
+			-- This is executed as long as the previous fetch succeeds.
+			FETCH NEXT FROM labels_cursor into @label
+			END
+			
+			CLOSE labels_cursor
+			DEALLOCATE labels_cursor 
 		end
 	end else PRINT 'Uzytkownik o id=' + CAST(@member_id as VARCHAR) + 'jest nieaktywny'
 end
